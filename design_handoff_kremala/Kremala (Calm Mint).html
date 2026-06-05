@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ΚΡΕΜΑΛΑ</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="game">
+
+<div class="preview-ctl">
+  <span>Preview</span>
+  <button data-st="play" class="on">Play</button>
+  <button data-st="win">Νίκη</button>
+  <button data-st="over">Game Over</button>
+</div>
+
+<div class="app t-mint">
+  
+    <div class="nav">
+      <div class="brand">
+        <span class="brand-mark"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h12v3a6 6 0 0 1-12 0V4Z"/><path d="M10 12h4v4h-4z"/><rect x="8" y="18" width="8" height="2.4" rx="1.2"/></svg></span>
+        <span class="brand-name">ΚΡΕΜΑΛΑ</span>
+      </div>
+      <div class="nav-right">
+        <div class="score">
+          <span class="stat win"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h12v3a6 6 0 0 1-12 0V4Z"/><path d="M10 12h4v4h-4z"/><rect x="8" y="18" width="8" height="2.4" rx="1.2"/></svg>3</span>
+          <span class="sep"></span>
+          <span class="stat loss"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>1</span>
+        </div>
+        <button class="icon-btn" aria-label="Reset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.5-5.8"/><path d="M20 4v4h-4"/></svg></button>
+      </div>
+    </div>
+  <div class="stage">
+    <div class="lives"><svg class="pip" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip lost" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip lost" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg></div>
+    <div class="char-wrap">
+      <div class="char-platform"></div>
+      
+<svg viewBox="0 0 188 230" aria-hidden="true">
+  <rect class="c-ghost" x="76" y="182" width="14" height="38" rx="7"/>
+  <rect class="c-ghost" x="98" y="182" width="14" height="38" rx="7"/>
+  <path class="c-ghost" d="M130 126 q26 -2 34 -22"/>
+  <path class="c-skin c-out" d="M94 98 C58 98 50 142 56 170 C62 194 126 194 132 170 C138 142 130 98 94 98 Z"/>
+  <path class="c-line" d="M58 130 q-22 -4 -32 -22"/>
+  <circle class="c-skin c-out" cx="94" cy="72" r="41"/>
+  <path class="c-fill" d="M94 36 C94 16 80 6 62 9 C68 28 80 34 94 36 Z"/>
+  <path class="c-fill" d="M94 36 C94 18 108 8 126 13 C118 30 106 34 94 36 Z" opacity=".7"/>
+  <circle class="c-ink" cx="82" cy="70" r="5"/>
+  <circle class="c-ink" cx="106" cy="70" r="5"/>
+  <circle class="c-cheek" cx="72" cy="82" r="6.5"/>
+  <circle class="c-cheek" cx="116" cy="82" r="6.5"/>
+  <path class="c-line" d="M82 85 Q94 95 106 85"/>
+</svg>
+    </div>
+    <div class="stage-cap">2 / 5 γράμματα</div>
+  </div>
+  <div class="word"><div class="tile filled">Η</div><div class="tile blank">Λ</div><div class="tile filled">Ι</div><div class="tile blank">Ο</div><div class="tile blank">Σ</div></div>
+  <div class="keyboard"><button class="key is-wrong">Α</button><button class="key">Β</button><button class="key">Γ</button><button class="key">Δ</button><button class="key">Ε</button><button class="key">Ζ</button><button class="key is-correct">Η</button><button class="key">Θ</button><button class="key is-correct">Ι</button><button class="key">Κ</button><button class="key">Λ</button><button class="key">Μ</button><button class="key">Ν</button><button class="key">Ξ</button><button class="key">Ο</button><button class="key is-press">Π</button><button class="key">Ρ</button><button class="key">Σ</button><button class="key is-wrong">Τ</button><button class="key">Υ</button><button class="key">Φ</button><button class="key">Χ</button><button class="key">Ψ</button><button class="key">Ω</button></div>
+
+  <!-- Victory overlay -->
+  <div class="scrim win" style="display:none">
+    <div class="modal win">
+      <div class="badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h12v3a6 6 0 0 1-12 0V4Z"/><path d="M10 12h4v4h-4z"/><rect x="8" y="18" width="8" height="2.4" rx="1.2"/></svg></div>
+      <h3>ΝΙΚΗ!</h3>
+      <p class="msg">Βρήκες τη λέξη 🎉</p>
+      <div class="reveal"><span class="lab">Η λέξη</span><span>Η</span><span>Λ</span><span>Ι</span><span>Ο</span><span>Σ</span></div>
+      <div class="score-row"><div>Νίκες<b>4</b></div><div>Ήττες<b>1</b></div></div>
+      <button class="btn">Νέα λέξη</button>
+      <button class="btn ghost">Αρχική</button>
+    </div>
+  </div>
+
+  <!-- Game Over overlay -->
+  <div class="scrim over" style="display:none">
+    <div class="modal over">
+      <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.5-5.8"/><path d="M4 4v4h4"/></svg></div>
+      <h3>ΚΡΙΜΑ!</h3>
+      <p class="msg">Σχεδόν τα κατάφερες</p>
+      <div class="reveal"><span class="lab">Η λέξη</span><span>Η</span><span>Λ</span><span>Ι</span><span>Ο</span><span>Σ</span></div>
+      <div class="score-row"><div>Νίκες<b>3</b></div><div>Ήττες<b>2</b></div></div>
+      <button class="btn">Δοκίμασε ξανά</button>
+      <button class="btn ghost">Αρχική</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const btns = document.querySelectorAll('.preview-ctl button');
+  const scrims = { win: document.querySelector('.scrim.win'), over: document.querySelector('.scrim.over') };
+  btns.forEach(b => b.addEventListener('click', () => {
+    btns.forEach(x => x.classList.toggle('on', x === b));
+    Object.values(scrims).forEach(s => s.style.display = 'none');
+    const st = b.dataset.st;
+    if (scrims[st]) scrims[st].style.display = 'flex';
+  }));
+</script>
+</body>
+</html>

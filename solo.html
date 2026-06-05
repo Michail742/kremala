@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ΚΡΕΜΑΛΑ</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: 'Nunito', system-ui, sans-serif;
+  background: #d7e4dd;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+}
+button { font: inherit; color: inherit; border: none; background: none; cursor: pointer; }
+svg { display: block; }
+
+/* ============================================================
+   THEME · MINT
+   ============================================================ */
+.t-mint {
+  --bg: #eef7f1;
+  --surface: #ffffff;
+  --ink: #173a2e;
+  --muted: #9bb8ab;
+  --hair: #dcece2;
+  --accent: #21b58e;
+  --accent-strong: #149173;
+  --accent-soft: #d3f0e4;
+  --on-accent: #fff;
+  --char-skin: #bfe9d4;
+  --char-line: #173a2e;
+  --good: #15a36e;
+  --good-ink: #0f7d54;
+  --good-soft: #d7f1e3;
+  --good-bd: #b3e3cd;
+  --tile-line: #d6e8de;
+  --key-bg: #ffffff;
+  --key-ink: #1c3a30;
+  --key-bd: #dcece2;
+  --key-shadow: #e1efe7;
+  --key-hover: #effaf4;
+  --scrim: rgba(23,58,46,.30);
+}
+
+/* ============================================================
+   APP SHELL
+   ============================================================ */
+.app {
+  width: 100%;
+  max-width: 460px;
+  min-height: 100dvh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  padding: max(20px, env(safe-area-inset-top)) 20px max(28px, env(safe-area-inset-bottom));
+  position: relative;
+  overflow: hidden;
+}
+
+/* ---------- NAV ---------- */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 0 6px;
+  flex-shrink: 0;
+}
+.brand { display: flex; align-items: center; gap: 9px; }
+.brand-mark {
+  width: 32px; height: 32px; border-radius: 10px;
+  background: var(--accent);
+  display: grid; place-items: center;
+  color: var(--on-accent);
+  box-shadow: 0 6px 14px -6px var(--accent);
+}
+.brand-name { font-size: 16px; font-weight: 900; letter-spacing: .02em; color: var(--ink); }
+.nav-right { display: flex; align-items: center; gap: 8px; }
+.score {
+  display: flex; align-items: center; gap: 4px;
+  background: var(--surface);
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  padding: 5px 6px;
+}
+.score .stat {
+  display: flex; align-items: center; gap: 5px;
+  padding: 1px 7px;
+  font-weight: 900; font-size: 13px;
+}
+.score .stat svg { width: 14px; height: 14px; }
+.score .win { color: var(--good-ink); }
+.score .win svg { color: var(--good); }
+.score .loss { color: var(--muted); }
+.score .sep { width: 1px; height: 16px; background: var(--hair); }
+.icon-btn {
+  width: 38px; height: 38px; border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--hair);
+  display: grid; place-items: center;
+  color: var(--ink);
+  transition: transform .15s ease, background .15s ease;
+}
+.icon-btn svg { width: 19px; height: 19px; }
+.icon-btn:active { transform: rotate(-35deg) scale(.95); background: var(--accent-soft); }
+
+/* ---------- CHARACTER STAGE ---------- */
+.stage {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 14px;
+  padding: 6px 0 2px;
+}
+.lives { display: flex; gap: 9px; align-items: center; }
+.lives .pip { width: 19px; height: 19px; color: var(--accent); }
+.lives .pip.lost { color: var(--muted); opacity: .42; }
+.lives .pip path { fill: currentColor; }
+.lives .pip.lost path { fill: none; stroke: currentColor; stroke-width: 2.2; }
+
+.char-wrap {
+  width: 188px; height: 230px;
+  display: grid; place-items: center;
+  position: relative;
+}
+.char-wrap svg { width: 100%; height: 100%; overflow: visible; }
+.char-platform {
+  position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%);
+  width: 130px; height: 20px; border-radius: 50%;
+  background: var(--accent-soft); filter: blur(.5px); opacity: .85;
+}
+
+/* Character piece solid styles */
+.c-skin  { fill: var(--char-skin); }
+.c-fill  { fill: var(--accent); }
+.c-line  { fill: none; stroke: var(--char-line); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+.c-ink   { fill: var(--char-line); }
+.c-cheek { fill: var(--accent); opacity: .28; }
+.c-out   { stroke: var(--char-line); stroke-width: 4; }
+
+/* Ghost state — overrides solid styles when piece not yet revealed */
+[data-ghost] {
+  fill: none !important;
+  stroke: var(--muted) !important;
+  stroke-width: 3.5 !important;
+  stroke-dasharray: 6 8 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  opacity: 0.5 !important;
+}
+[data-ghost][data-cheek] {
+  fill: var(--muted) !important;
+  stroke: none !important;
+  stroke-dasharray: none !important;
+  opacity: 0.12 !important;
+}
+
+.stage-cap { font-size: 12.5px; font-weight: 700; color: var(--muted); letter-spacing: .02em; }
+
+/* ---------- WORD DISPLAY ---------- */
+.word {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  justify-content: center; align-items: flex-end;
+  padding: 8px 0 14px;
+  flex-shrink: 0;
+}
+.tile {
+  width: 40px; height: 54px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px; font-weight: 900; color: var(--ink);
+  border-bottom: 4px solid var(--tile-line);
+  position: relative;
+}
+.tile.filled { border-bottom-color: var(--accent); }
+.tile.filled::after {
+  content: '';
+  position: absolute; bottom: -4px; left: 0; right: 0;
+  height: 4px; background: var(--accent); border-radius: 3px;
+}
+.tile.blank { color: transparent; }
+
+@keyframes tile-pop {
+  0%   { transform: scale(0.55) rotateY(90deg); opacity: 0; }
+  55%  { transform: scale(1.14) rotateY(-6deg); }
+  75%  { transform: scale(0.97) rotateY(2deg); }
+  100% { transform: scale(1) rotateY(0deg); opacity: 1; }
+}
+@keyframes tile-wave {
+  0%,100% { transform: translateY(0); }
+  40%     { transform: translateY(-9px); }
+}
+.tile.anim-reveal {
+  animation: tile-pop .38s cubic-bezier(.34,1.4,.64,1) both;
+}
+.tile.anim-wave {
+  animation: tile-wave .5s ease both;
+}
+
+/* ---------- KEYBOARD ---------- */
+.keyboard {
+  display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;
+  padding-top: 4px;
+  flex-shrink: 0;
+}
+.key {
+  min-height: 50px; aspect-ratio: 1 / 1;
+  border-radius: 14px;
+  display: grid; place-items: center;
+  font-size: 21px; font-weight: 800;
+  color: var(--key-ink);
+  background: var(--key-bg);
+  border: 1px solid var(--key-bd);
+  box-shadow: 0 2px 0 var(--key-shadow);
+  transition: transform .08s ease, background .12s ease, box-shadow .08s ease;
+  user-select: none;
+}
+.key:hover:not(.is-correct):not(.is-wrong) { background: var(--key-hover); }
+.key:active:not(.is-correct):not(.is-wrong),
+.key.is-press {
+  transform: translateY(2px);
+  box-shadow: 0 0 0 var(--key-shadow);
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  border-color: var(--accent);
+}
+.key.is-correct {
+  background: var(--good-soft); color: var(--good-ink);
+  border-color: var(--good-bd);
+  box-shadow: none; pointer-events: none;
+}
+.key.is-wrong {
+  background: transparent; color: var(--muted);
+  border-color: var(--hair);
+  box-shadow: none; opacity: .45; pointer-events: none;
+}
+
+/* ============================================================
+   MODALS
+   ============================================================ */
+.scrim {
+  position: absolute; inset: 0; z-index: 5;
+  background: var(--scrim);
+  backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.scrim[hidden] { display: none; }
+
+.modal {
+  width: 100%; background: var(--surface);
+  border-radius: 28px; padding: 30px 26px 26px;
+  text-align: center;
+  box-shadow: 0 30px 60px -24px rgba(10,14,25,.5);
+  border: 1px solid var(--hair);
+}
+.modal .badge {
+  width: 78px; height: 78px; border-radius: 24px;
+  margin: 0 auto 16px;
+  display: grid; place-items: center;
+}
+.modal.win .badge  { background: var(--good-soft); color: var(--good); }
+.modal.over .badge { background: var(--accent-soft); color: var(--accent); }
+.modal .badge svg { width: 40px; height: 40px; }
+.modal h3 { font-size: 30px; font-weight: 900; letter-spacing: -.01em; color: var(--ink); }
+.modal .msg { margin-top: 6px; font-size: 15px; color: var(--muted); font-weight: 600; }
+.modal .reveal {
+  margin: 18px auto 4px;
+  display: inline-flex; flex-wrap: wrap; gap: 7px;
+  padding: 11px 16px;
+  background: var(--bg); border-radius: 14px;
+  justify-content: center;
+}
+.modal .reveal span { font-size: 22px; font-weight: 900; color: var(--ink); }
+.modal .reveal .lab {
+  display: block; width: 100%;
+  font-size: 11px; font-weight: 800;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 4px;
+}
+.modal .score-row {
+  display: flex; justify-content: center; gap: 20px;
+  margin: 18px 0 22px;
+}
+.modal .score-row div { font-size: 13px; font-weight: 700; color: var(--muted); }
+.modal .score-row b { display: block; font-size: 24px; font-weight: 900; color: var(--ink); margin-top: 2px; }
+
+.btn {
+  width: 100%; height: 54px; border-radius: 16px;
+  font-size: 17px; font-weight: 900;
+  background: var(--accent); color: var(--on-accent);
+  box-shadow: 0 12px 22px -10px var(--accent);
+  letter-spacing: .01em;
+  transition: transform .12s ease;
+}
+.btn:active { transform: translateY(2px); }
+.btn.ghost {
+  background: transparent; color: var(--muted);
+  box-shadow: none; height: 46px; font-size: 15px; margin-top: 4px;
+}
+</style>
+</head>
+<body>
+
+<div class="app t-mint" id="app">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="brand">
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" aria-hidden="true">
+          <path d="M6 4h12v3a6 6 0 0 1-12 0V4Z"/>
+          <path d="M10 12h4v4h-4z"/>
+          <rect x="8" y="18" width="8" height="2.4" rx="1.2"/>
+        </svg>
+      </span>
+      <span class="brand-name">ΚΡΕΜΑΛΑ</span>
+    </div>
+    <div class="nav-right">
+      <div class="score" aria-label="Σκορ">
+        <span class="stat win">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M6 4h12v3a6 6 0 0 1-12 0V4Z"/>
+            <path d="M10 12h4v4h-4z"/>
+            <rect x="8" y="18" width="8" height="2.4" rx="1.2"/>
+          </svg>
+          <span id="wins-count">0</span>
+        </span>
+        <span class="sep" aria-hidden="true"></span>
+        <span class="stat loss">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true">
+            <path d="M7 7l10 10M17 7L7 17"/>
+          </svg>
+          <span id="losses-count">0</span>
+        </span>
+      </div>
+      <button class="icon-btn" id="reset-btn" aria-label="Νέα λέξη">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20 12a8 8 0 1 1-2.5-5.8"/>
+          <path d="M20 4v4h-4"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- CHARACTER STAGE -->
+  <div class="stage">
+    <div class="lives" id="lives-row" role="img" aria-label="Ζωές"></div>
+
+    <div class="char-wrap">
+      <div class="char-platform" aria-hidden="true"></div>
+      <svg id="character" viewBox="0 0 188 230" aria-hidden="true">
+        <!-- Legs — stage 6 -->
+        <rect id="p-leg-l" class="c-skin c-out" x="76" y="182" width="14" height="38" rx="7"/>
+        <rect id="p-leg-r" class="c-skin c-out" x="98" y="182" width="14" height="38" rx="7"/>
+        <!-- Right arm — stage 5 -->
+        <path id="p-arm-r" class="c-line" d="M130 126 q26 -2 34 -22"/>
+        <!-- Body — stage 3 -->
+        <path id="p-body" class="c-skin c-out" d="M94 98 C58 98 50 142 56 170 C62 194 126 194 132 170 C138 142 130 98 94 98 Z"/>
+        <!-- Left arm — stage 4 -->
+        <path id="p-arm-l" class="c-line" d="M58 130 q-22 -4 -32 -22"/>
+        <!-- Head — stage 1 -->
+        <circle id="p-head" class="c-skin c-out" cx="94" cy="72" r="41"/>
+        <!-- Crown — stage 2 -->
+        <path id="p-crown-l" class="c-fill" d="M94 36 C94 16 80 6 62 9 C68 28 80 34 94 36 Z"/>
+        <path id="p-crown-r" class="c-fill" d="M94 36 C94 18 108 8 126 13 C118 30 106 34 94 36 Z" opacity=".7"/>
+        <!-- Eyes & smile — stage 1 -->
+        <circle id="p-eye-l" class="c-ink" cx="82" cy="70" r="5"/>
+        <circle id="p-eye-r" class="c-ink" cx="106" cy="70" r="5"/>
+        <path id="p-smile" class="c-line" d="M82 85 Q94 95 106 85"/>
+        <!-- Cheeks — stage 2 -->
+        <circle id="p-cheek-l" class="c-cheek" cx="72" cy="82" r="6.5" data-cheek/>
+        <circle id="p-cheek-r" class="c-cheek" cx="116" cy="82" r="6.5" data-cheek/>
+      </svg>
+    </div>
+
+    <div class="stage-cap" id="stage-cap" aria-live="polite">0 / 0 γράμματα</div>
+  </div>
+
+  <!-- WORD DISPLAY -->
+  <div class="word" id="word-display" aria-label="Λέξη" aria-live="polite"></div>
+
+  <!-- KEYBOARD -->
+  <div class="keyboard" id="keyboard" role="group" aria-label="Πληκτρολόγιο"></div>
+
+  <!-- Victory modal -->
+  <div class="scrim win" id="modal-win" hidden role="dialog" aria-modal="true" aria-label="Νίκη">
+    <div class="modal win">
+      <div class="badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M6 4h12v3a6 6 0 0 1-12 0V4Z"/>
+          <path d="M10 12h4v4h-4z"/>
+          <rect x="8" y="18" width="8" height="2.4" rx="1.2"/>
+        </svg>
+      </div>
+      <h3>ΝΙΚΗ!</h3>
+      <p class="msg">Βρήκες τη λέξη 🎉</p>
+      <div class="reveal" id="win-reveal">
+        <span class="lab">Η λέξη</span>
+      </div>
+      <div class="score-row">
+        <div>Νίκες<b id="win-wins">0</b></div>
+        <div>Ήττες<b id="win-losses">0</b></div>
+      </div>
+      <button class="btn" id="win-new">Νέα λέξη</button>
+      <button class="btn ghost" id="win-home">Αρχική</button>
+    </div>
+  </div>
+
+  <!-- Game Over modal -->
+  <div class="scrim over" id="modal-over" hidden role="dialog" aria-modal="true" aria-label="Ήττα">
+    <div class="modal over">
+      <div class="badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 12a8 8 0 1 0 2.5-5.8"/>
+          <path d="M4 4v4h4"/>
+        </svg>
+      </div>
+      <h3>ΚΡΙΜΑ!</h3>
+      <p class="msg">Σχεδόν τα κατάφερες</p>
+      <div class="reveal" id="over-reveal">
+        <span class="lab">Η λέξη</span>
+      </div>
+      <div class="score-row">
+        <div>Νίκες<b id="over-wins">0</b></div>
+        <div>Ήττες<b id="over-losses">0</b></div>
+      </div>
+      <button class="btn" id="over-retry">Δοκίμασε ξανά</button>
+      <button class="btn ghost" id="over-home">Αρχική</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// WORD LIST — common Greek words, 4–10 letters
+// ============================================================
+const WORDS = [
+  'ΗΛΙΟΣ','ΑΣΤΕΡΙ','ΘΑΛΑΣΣΑ','ΒΟΥΝΟ','ΠΟΤΑΜΙ','ΔΕΝΤΡΟ',
+  'ΑΓΑΠΗ','ΕΛΛΑΔΑ','ΚΟΣΜΟΣ','ΟΝΕΙΡΟ','ΚΑΡΔΙΑ','ΨΥΧΗ',
+  'ΦΕΓΓΑΡΙ','ΟΥΡΑΝΟΣ','ΣΠΙΤΙ','ΣΧΟΛΕΙΟ','ΦΙΛΟΣ','ΑΔΕΛΦΟΣ',
+  'ΜΗΤΕΡΑ','ΠΑΙΔΙ','ΓΑΤΑ','ΣΚΥΛΟΣ','ΠΟΥΛΙ','ΛΟΥΛΟΥΔΙ',
+  'ΝΕΡΟ','ΦΩΤΙΑ','ΒΙΒΛΙΟ','ΜΟΥΣΙΚΗ','ΤΡΑΓΟΥΔΙ','ΓΕΛΙΟ',
+  'ΣΟΦΙΑ','ΑΛΗΘΕΙΑ','ΤΕΧΝΗ','ΧΡΩΜΑ','ΜΑΓΕΙΑ','ΠΑΡΑΜΥΘΙ',
+  'ΚΑΛΟΚΑΙΡΙ','ΧΕΙΜΩΝΑΣ','ΑΝΟΙΞΗ','ΠΑΡΑΛΙΑ','ΝΗΣΙ',
+  'ΓΕΦΥΡΑ','ΠΑΡΚΟ','ΚΗΠΟΣ','ΠΛΑΤΕΙΑ','ΘΕΑΤΡΟ','ΜΟΥΣΕΙΟ',
+  'ΤΑΞΙΔΙ','ΧΑΡΑ','ΛΥΠΗ','ΕΛΠΙΔΑ','ΣΠΟΡ','ΚΟΛΥΜΠΙ',
+  'ΜΗΛΟ','ΣΤΑΦΥΛΙ','ΚΕΡΑΣΙ','ΦΡΑΟΥΛΑ','ΜΕΛΙ','ΤΥΡΙ',
+  'ΨΩΜΙ','ΑΥΓΟ','ΓΑΛΑ','ΚΡΕΑΣ','ΨΑΡΙ','ΛΑΧΑΝΟ',
+  'ΤΡΙΑΝΤΑΦΥΛΛΟ','ΧΑΜΟΜΗΛΙ','ΔΑΦΝΗ','ΒΑΣΙΛΙΚΟΣ',
+  'ΑΕΤΟΣ','ΔΕΛΦΙΝΙ','ΑΛΕΠΟΥ','ΛΙΟΝΤΑΡΙ','ΕΛΑΦΙ',
+  'ΣΕΛΗΝΗ','ΑΣΤΡΟ','ΟΥΡΑΝΙΟΣ','ΚΕΡΑΥΝΟΣ','ΑΝΕΜΟΣ',
+  'ΒΡΟΧΗ','ΧΙΟΝΙ','ΟΜΙΧΛΗ','ΑΥΓΗ','ΔΥΣΗ',
+  'ΓΛΩΣΣΑ','ΛΟΓΟΣ','ΦΩΝΗ','ΣΙΩΠΗ','ΜΝΗΜΗ',
+  'ΑΓΩΝΑΣ','ΝΙΚΗ','ΗΤΤΑ','ΔΥΝΑΜΗ','ΘΑΡΡΟΣ',
+  'ΕΙΡΗΝΗ','ΧΑΡΜΑ','ΑΡΕΤΗ','ΤΙΜΗ','ΔΟΞΑ',
+  'ΠΟΙΗΣΗ','ΙΣΤΟΡΙΑ','ΜΥΘΟΣ','ΘΡΥΛΟΣ','ΕΠΙΚΗ',
+  'ΧΑΡΤΗΣ','ΚΛΕΙΔΙ','ΠΟΡΤΑ','ΠΑΡΑΘΥΡΟ','ΣΚΑΛΑ',
+];
+
+// ============================================================
+// KEYBOARD — 24 Greek letters Α–Ω
+// ============================================================
+const LETTERS = ['Α','Β','Γ','Δ','Ε','Ζ','Η','Θ','Ι','Κ','Λ','Μ','Ν','Ξ','Ο','Π','Ρ','Σ','Τ','Υ','Φ','Χ','Ψ','Ω'];
+
+// ============================================================
+// CHARACTER PIECES — [id, revealStage, isCheek]
+// Stage 1–6 maps to wrong-guess count (lives lost)
+// ============================================================
+const PIECES = [
+  ['p-head',    1, false],
+  ['p-eye-l',   1, false],
+  ['p-eye-r',   1, false],
+  ['p-smile',   1, false],
+  ['p-crown-l', 2, false],
+  ['p-crown-r', 2, false],
+  ['p-cheek-l', 2, true],
+  ['p-cheek-r', 2, true],
+  ['p-body',    3, false],
+  ['p-arm-l',   4, false],
+  ['p-arm-r',   5, false],
+  ['p-leg-l',   6, false],
+  ['p-leg-r',   6, false],
+];
+
+// ============================================================
+// STATE
+// ============================================================
+const state = {
+  word: '',
+  guessed: new Set(),
+  livesRemaining: 6,
+  status: 'playing', // 'playing' | 'won' | 'lost'
+  score: { wins: 0, losses: 0 },
+};
+
+// ============================================================
+// PERSISTENCE
+// ============================================================
+function loadScore() {
+  try {
+    const s = JSON.parse(localStorage.getItem('kremala-score') || '{}');
+    if (typeof s.wins === 'number') state.score.wins = s.wins;
+    if (typeof s.losses === 'number') state.score.losses = s.losses;
+  } catch (_) {}
+}
+
+function saveScore() {
+  try { localStorage.setItem('kremala-score', JSON.stringify(state.score)); } catch (_) {}
+}
+
+// ============================================================
+// KEYBOARD BUILD
+// ============================================================
+function buildKeyboard() {
+  const kb = document.getElementById('keyboard');
+  kb.innerHTML = '';
+  LETTERS.forEach(letter => {
+    const btn = document.createElement('button');
+    btn.className = 'key';
+    btn.textContent = letter;
+    btn.dataset.letter = letter;
+    btn.addEventListener('click', () => handleGuess(letter));
+    kb.appendChild(btn);
+  });
+}
+
+// ============================================================
+// ROUND MANAGEMENT
+// ============================================================
+function newRound() {
+  state.word = WORDS[Math.floor(Math.random() * WORDS.length)];
+  state.guessed = new Set();
+  state.livesRemaining = 6;
+  state.status = 'playing';
+
+  document.getElementById('modal-win').hidden = true;
+  document.getElementById('modal-over').hidden = true;
+
+  document.querySelectorAll('.key').forEach(k => { k.className = 'key'; });
+
+  render();
+}
+
+// ============================================================
+// GAME LOGIC
+// ============================================================
+function handleGuess(letter) {
+  if (state.status !== 'playing') return;
+  if (state.guessed.has(letter)) return;
+
+  state.guessed.add(letter);
+
+  const hit = state.word.includes(letter);
+  const keyEl = document.querySelector(`.key[data-letter="${letter}"]`);
+  if (keyEl) keyEl.classList.add(hit ? 'is-correct' : 'is-wrong');
+
+  if (!hit) state.livesRemaining--;
+
+  const unique = new Set(state.word);
+  const allFound = [...unique].every(l => state.guessed.has(l));
+
+  if (allFound) {
+    state.status = 'won';
+    state.score.wins++;
+    saveScore();
+  } else if (state.livesRemaining <= 0) {
+    state.status = 'lost';
+    state.score.losses++;
+    saveScore();
+  }
+
+  render();
+
+  if (hit) {
+    document.querySelectorAll(`.tile[data-letter="${letter}"]`).forEach((t, i) => {
+      t.classList.remove('anim-reveal');
+      void t.offsetWidth; // reflow to restart animation
+      t.style.animationDelay = `${i * 55}ms`;
+      t.classList.add('anim-reveal');
+    });
+  }
+
+  if (state.status === 'won') {
+    setTimeout(() => {
+      document.querySelectorAll('.tile.filled').forEach((t, i) => {
+        t.classList.remove('anim-wave');
+        void t.offsetWidth;
+        t.style.animationDelay = `${i * 70}ms`;
+        t.classList.add('anim-wave');
+      });
+    }, 80);
+    setTimeout(showWinModal, 650);
+  } else if (state.status === 'lost') {
+    setTimeout(showOverModal, 450);
+  }
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function render() {
+  // Score
+  document.getElementById('wins-count').textContent = state.score.wins;
+  document.getElementById('losses-count').textContent = state.score.losses;
+
+  // Lives
+  const livesRow = document.getElementById('lives-row');
+  livesRow.innerHTML = '';
+  for (let i = 0; i < 6; i++) {
+    const pip = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    pip.setAttribute('viewBox', '0 0 24 24');
+    pip.setAttribute('class', i < state.livesRemaining ? 'pip' : 'pip lost');
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', 'M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z');
+    pip.appendChild(path);
+    livesRow.appendChild(pip);
+  }
+
+  // Character
+  const wrong = 6 - state.livesRemaining;
+  PIECES.forEach(([id, stage, isCheek]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (wrong >= stage) {
+      el.removeAttribute('data-ghost');
+    } else {
+      el.setAttribute('data-ghost', '');
+      if (isCheek) el.setAttribute('data-cheek', '');
+    }
+  });
+
+  // Word tiles
+  const wordDisplay = document.getElementById('word-display');
+  wordDisplay.innerHTML = '';
+  for (const letter of state.word) {
+    const revealed = state.guessed.has(letter) || state.status === 'lost';
+    const tile = document.createElement('div');
+    tile.className = 'tile ' + (revealed ? 'filled' : 'blank');
+    tile.textContent = letter;
+    tile.dataset.letter = letter;
+    wordDisplay.appendChild(tile);
+  }
+
+  // Caption
+  const unique = new Set(state.word);
+  const found = [...unique].filter(l => state.guessed.has(l)).length;
+  document.getElementById('stage-cap').textContent = `${found} / ${unique.size} γράμματα`;
+}
+
+// ============================================================
+// MODALS
+// ============================================================
+function populateReveal(containerId, word) {
+  const container = document.getElementById(containerId);
+  const lab = container.querySelector('.lab');
+  container.innerHTML = '';
+  container.appendChild(lab);
+  for (const letter of word) {
+    const span = document.createElement('span');
+    span.textContent = letter;
+    container.appendChild(span);
+  }
+}
+
+function showWinModal() {
+  populateReveal('win-reveal', state.word);
+  document.getElementById('win-wins').textContent = state.score.wins;
+  document.getElementById('win-losses').textContent = state.score.losses;
+  document.getElementById('modal-win').hidden = false;
+  document.getElementById('win-new').focus();
+}
+
+function showOverModal() {
+  populateReveal('over-reveal', state.word);
+  document.getElementById('over-wins').textContent = state.score.wins;
+  document.getElementById('over-losses').textContent = state.score.losses;
+  document.getElementById('modal-over').hidden = false;
+  document.getElementById('over-retry').focus();
+}
+
+// ============================================================
+// EVENTS
+// ============================================================
+document.getElementById('reset-btn').addEventListener('click', newRound);
+document.getElementById('win-new').addEventListener('click', newRound);
+document.getElementById('win-home').addEventListener('click', newRound);
+document.getElementById('over-retry').addEventListener('click', newRound);
+document.getElementById('over-home').addEventListener('click', newRound);
+
+// ============================================================
+// START
+// ============================================================
+loadScore();
+buildKeyboard();
+newRound();
+</script>
+</body>
+</html>

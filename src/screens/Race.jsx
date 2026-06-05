@@ -1,0 +1,116 @@
+import { useState } from 'react'
+import Character from '../components/Character'
+import Keyboard from '../components/Keyboard'
+import WordDisplay from '../components/WordDisplay'
+import LivesPips from '../components/LivesPips'
+import { guessLetterRace, resetRoom } from '../hooks/useRoom'
+import { wordForRoom } from '../data'
+
+function BrandSvg() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" aria-hidden="true">
+      <path d="M6 4h12v3a6 6 0 0 1-12 0V4Z"/>
+      <path d="M10 12h4v4h-4z"/>
+      <rect x="8" y="18" width="8" height="2.4" rx="1.2"/>
+    </svg>
+  )
+}
+
+export default function Race({ room, session, onHome }) {
+  const [lastGuessed, setLastGuessed] = useState(null)
+
+  const word = wordForRoom(room)
+  const myId = session?.myId
+  const players = room?.players || {}
+  const raceStates = room?.raceStates || {}
+
+  const myState = raceStates[myId] || { guessed: {}, livesRemaining: 6, status: 'playing' }
+  const opponentId = Object.keys(players).find(id => id !== myId)
+  const opponentState = opponentId ? raceStates[opponentId] : null
+  const opponentName = opponentId ? players[opponentId]?.name : '?'
+
+  const myGuessed = myState.guessed || {}
+  const myLives = myState.livesRemaining ?? 6
+  const myStatus = myState.status || 'playing'
+  const wrongGuesses = 6 - myLives
+  const unique = new Set(word)
+  const found = [...unique].filter(l => myGuessed[l]).length
+
+  const isFinished = room?.status === 'finished'
+  const winner = room?.winner
+  const iWon = winner === myId
+  const theyWon = winner && winner !== myId
+
+  const oppGuessed = opponentState?.guessed || {}
+  const oppLives = opponentState?.livesRemaining ?? 6
+  const oppFound = opponentState ? [...unique].filter(l => oppGuessed[l]).length : 0
+
+  async function handleGuess(letter) {
+    if (isFinished || myStatus !== 'playing') return
+    setLastGuessed(letter)
+    await guessLetterRace(session.roomCode, myId, letter, word, myGuessed, myLives)
+  }
+
+  async function handleReset() {
+    setLastGuessed(null)
+    await resetRoom(session.roomCode, room.mode)
+  }
+
+  return (
+    <div className="app t-mint">
+      {/* Opponent status card */}
+      {opponentState && (
+        <div className="opponent-card">
+          <span className="opp-name">{opponentName}</span>
+          <div className="opp-lives">
+            {Array.from({ length: 6 }, (_, i) => (
+              <span key={i} className={`opp-pip${i < oppLives ? '' : ' lost'}`} />
+            ))}
+          </div>
+          <span className="opp-letters">{oppFound}/{unique.size}</span>
+        </div>
+      )}
+
+      <div className="stage">
+        <LivesPips lives={myLives} />
+        <div className="char-wrap">
+          <div className="char-platform" />
+          <Character wrongGuesses={wrongGuesses} />
+        </div>
+        <div className="stage-cap" aria-live="polite">{found} / {unique.size} γράμματα</div>
+      </div>
+
+      <WordDisplay
+        word={word}
+        guessed={myGuessed}
+        revealed={isFinished && myStatus !== 'won'}
+        lastGuessed={lastGuessed}
+      />
+
+      <Keyboard word={word} guessed={myGuessed} onGuess={handleGuess} disabled={isFinished} />
+
+      {isFinished && (
+        <div className="scrim" role="dialog" aria-modal="true">
+          <div className={`modal ${iWon ? 'win' : 'over'}`}>
+            <div className="badge">
+              {iWon
+                ? <BrandSvg />
+                : <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" width="40" height="40"><path d="M4 12a8 8 0 1 0 2.5-5.8"/><path d="M4 4v4h4"/></svg>
+              }
+            </div>
+            <h3>{iWon ? 'ΝΙΚΗ!' : theyWon ? `${opponentName} νίκησε!` : 'ΚΡΙΜΑ!'}</h3>
+            <p className="msg">
+              {iWon ? 'Έλυσες πρώτος!' : theyWon ? 'Ήσουν κοντά' : 'Δεν τα κατάφερε κανείς'}
+            </p>
+            <div className="reveal">
+              <span className="lab">Η λέξη</span>
+              {[...word].map((l, i) => <span key={i}>{l}</span>)}
+            </div>
+            <button className="btn" style={{ marginTop: '18px' }} onClick={handleReset}>Ξανά!</button>
+            <button className="btn ghost" onClick={onHome}>Έξοδος</button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ΚΡΕΜΑΛΑ — Design Prototype</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="gallery">
+
+  <header class="gallery-head">
+    <div class="gallery-eyebrow">Visual design prototype · Static</div>
+    <h1 class="gallery-title">ΚΡΕΜΑΛΑ — a friendly mobile Hangman</h1>
+    <p class="gallery-sub">Three directions for the same mobile screen, built to spec: a strict single-viewport layout (no scroll), a touch keyboard with Normal / Touch / Correct / Wrong states, and a friendly character that <b>builds up</b> piece-by-piece as you progress — no gallows.</p>
+    <div class="notes">
+      <div class="note"><h4>The metaphor</h4><p>A friendly avatar assembles as you guess. Dashed pieces are <b>yet to be earned</b>; hearts track your remaining tries.</p></div>
+      <div class="note"><h4>Layout</h4><p>Everything lives in one <b>100dvh</b> column — nav, character, word, keyboard — distributed with Flexbox. Never scrolls.</p></div>
+      <div class="note"><h4>Keyboard</h4><p>24 letters Α–Ω, 6×4 grid, ≥50px targets. Greens = correct, faded = wrong, raised = touch.</p></div>
+      <div class="note"><h4>Type</h4><p><b>Nunito</b> (geometric-rounded, full Greek support) at heavy weights for the letters.</p></div>
+    </div>
+  </header>
+
+  <section>
+    <div class="section-label">PLAY SCREEN — mid-game <span>· three directions to compare</span></div>
+    <div class="frames">
+      <div class="frame">
+        <div class="frame-cap"><span class="n">A · Pastel Pop</span><span class="d">warm & playful</span></div>
+        <div class="phone t-pastel">
+  
+  <div class="statusbar">
+    <span>9:41</span>
+    <span class="sb-right"><i></i><i style="width:13px"></i><span class="bat"></span></span>
+  </div>
+  <div class="screen">
+    
+  <div class="nav">
+    <div class="brand">
+      <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2" fill="currentColor" stroke="none"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg></span>
+      <span class="brand-name">ΚΡΕΜΑΛΑ</span>
+    </div>
+    <div class="nav-right">
+      <div class="score">
+        <span class="stat win"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h12v3a6 6 0 0 1-12 0V4Z"/><path d="M10 12h4v4h-4z"/><rect x="8" y="18" width="8" height="2.4" rx="1.2"/></svg>3</span>
+        <span class="sep"></span>
+        <span class="stat loss"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>1</span>
+      </div>
+      <button class="icon-btn" aria-label="Reset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.5-5.8"/><path d="M20 4v4h-4"/></svg></button>
+    </div>
+  </div>
+    <div class="stage">
+      <div class="lives"><svg class="pip" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip lost" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip lost" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg></div>
+      <div class="char-wrap">
+        <div class="char-platform"></div>
+        
+<svg viewBox="0 0 188 230" aria-hidden="true">
+  <rect class="c-ghost" x="74" y="176" width="16" height="42" rx="8"/>
+  <rect class="c-ghost" x="98" y="176" width="16" height="42" rx="8"/>
+  <path class="c-ghost" d="M94 36 C94 20 82 12 70 14 C76 28 84 33 94 36 Z"/>
+  <rect class="c-ghost" x="126" y="116" width="38" height="18" rx="9" transform="rotate(22 145 125)"/>
+  <rect class="c-skin c-out" x="54" y="94" width="80" height="100" rx="40"/>
+  <ellipse class="c-soft" cx="94" cy="150" rx="27" ry="32"/>
+  <rect class="c-skin c-out" x="22" y="116" width="38" height="18" rx="9" transform="rotate(-22 41 125)"/>
+  <circle class="c-skin c-out" cx="94" cy="68" r="43"/>
+  <circle class="c-cheek" cx="72" cy="80" r="7.5"/>
+  <circle class="c-cheek" cx="116" cy="80" r="7.5"/>
+  <circle class="c-ink" cx="79" cy="64" r="5.6"/>
+  <circle class="c-ink" cx="109" cy="64" r="5.6"/>
+  <path class="c-line" d="M79 83 Q94 95 109 83"/>
+</svg>
+      </div>
+      <div class="stage-cap">2 / 5 γράμματα</div>
+    </div>
+    <div class="word"><div class="tile filled">Η</div><div class="tile blank">Λ</div><div class="tile filled">Ι</div><div class="tile blank">Ο</div><div class="tile blank">Σ</div></div>
+    <div class="keyboard"><button class="key is-wrong">Α</button><button class="key">Β</button><button class="key">Γ</button><button class="key">Δ</button><button class="key">Ε</button><button class="key">Ζ</button><button class="key is-correct">Η</button><button class="key">Θ</button><button class="key is-correct">Ι</button><button class="key">Κ</button><button class="key">Λ</button><button class="key">Μ</button><button class="key">Ν</button><button class="key">Ξ</button><button class="key">Ο</button><button class="key is-press">Π</button><button class="key">Ρ</button><button class="key">Σ</button><button class="key is-wrong">Τ</button><button class="key">Υ</button><button class="key">Φ</button><button class="key">Χ</button><button class="key">Ψ</button><button class="key">Ω</button></div>
+  </div></div>
+      </div>
+      <div class="frame">
+        <div class="frame-cap"><span class="n">B · Editorial</span><span class="d">crisp light + bold indigo</span></div>
+        <div class="phone t-editorial">
+  
+  <div class="statusbar">
+    <span>9:41</span>
+    <span class="sb-right"><i></i><i style="width:13px"></i><span class="bat"></span></span>
+  </div>
+  <div class="screen">
+    
+  <div class="nav">
+    <div class="brand">
+      <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2" fill="currentColor" stroke="none"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg></span>
+      <span class="brand-name">ΚΡΕΜΑΛΑ</span>
+    </div>
+    <div class="nav-right">
+      <div class="score">
+        <span class="stat win"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h12v3a6 6 0 0 1-12 0V4Z"/><path d="M10 12h4v4h-4z"/><rect x="8" y="18" width="8" height="2.4" rx="1.2"/></svg>3</span>
+        <span class="sep"></span>
+        <span class="stat loss"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>1</span>
+      </div>
+      <button class="icon-btn" aria-label="Reset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.5-5.8"/><path d="M20 4v4h-4"/></svg></button>
+    </div>
+  </div>
+    <div class="stage">
+      <div class="lives"><svg class="pip" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip lost" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip lost" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg></div>
+      <div class="char-wrap">
+        <div class="char-platform"></div>
+        
+<svg viewBox="0 0 188 230" aria-hidden="true">
+  <line class="c-ghost" x1="80" y1="188" x2="80" y2="216"/>
+  <line class="c-ghost" x1="108" y1="188" x2="108" y2="216"/>
+  <line class="c-ghost" x1="132" y1="128" x2="162" y2="110"/>
+  <rect class="c-soft c-out" x="58" y="106" width="72" height="84" rx="28"/>
+  <path class="c-line" d="M82 152 Q94 162 106 152"/>
+  <line class="c-line" x1="56" y1="128" x2="28" y2="110" style="stroke-width:6"/>
+  <circle class="c-fill" cx="94" cy="62" r="37"/>
+  <circle class="c-white" cx="83" cy="58" r="6.4"/>
+  <circle class="c-white" cx="105" cy="58" r="6.4"/>
+  <circle class="c-ink" cx="84" cy="59" r="2.7"/>
+  <circle class="c-ink" cx="106" cy="59" r="2.7"/>
+</svg>
+      </div>
+      <div class="stage-cap">2 / 5 γράμματα</div>
+    </div>
+    <div class="word"><div class="tile filled">Η</div><div class="tile blank">Λ</div><div class="tile filled">Ι</div><div class="tile blank">Ο</div><div class="tile blank">Σ</div></div>
+    <div class="keyboard"><button class="key is-wrong">Α</button><button class="key">Β</button><button class="key">Γ</button><button class="key">Δ</button><button class="key">Ε</button><button class="key">Ζ</button><button class="key is-correct">Η</button><button class="key">Θ</button><button class="key is-correct">Ι</button><button class="key">Κ</button><button class="key">Λ</button><button class="key">Μ</button><button class="key">Ν</button><button class="key">Ξ</button><button class="key">Ο</button><button class="key is-press">Π</button><button class="key">Ρ</button><button class="key">Σ</button><button class="key is-wrong">Τ</button><button class="key">Υ</button><button class="key">Φ</button><button class="key">Χ</button><button class="key">Ψ</button><button class="key">Ω</button></div>
+  </div></div>
+      </div>
+      <div class="frame">
+        <div class="frame-cap"><span class="n">C · Calm Mint</span><span class="d">soft & cool</span></div>
+        <div class="phone t-mint">
+  
+  <div class="statusbar">
+    <span>9:41</span>
+    <span class="sb-right"><i></i><i style="width:13px"></i><span class="bat"></span></span>
+  </div>
+  <div class="screen">
+    
+  <div class="nav">
+    <div class="brand">
+      <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2" fill="currentColor" stroke="none"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg></span>
+      <span class="brand-name">ΚΡΕΜΑΛΑ</span>
+    </div>
+    <div class="nav-right">
+      <div class="score">
+        <span class="stat win"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h12v3a6 6 0 0 1-12 0V4Z"/><path d="M10 12h4v4h-4z"/><rect x="8" y="18" width="8" height="2.4" rx="1.2"/></svg>3</span>
+        <span class="sep"></span>
+        <span class="stat loss"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>1</span>
+      </div>
+      <button class="icon-btn" aria-label="Reset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.5-5.8"/><path d="M20 4v4h-4"/></svg></button>
+    </div>
+  </div>
+    <div class="stage">
+      <div class="lives"><svg class="pip" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip lost" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip lost" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg></div>
+      <div class="char-wrap">
+        <div class="char-platform"></div>
+        
+<svg viewBox="0 0 188 230" aria-hidden="true">
+  <rect class="c-ghost" x="76" y="182" width="14" height="38" rx="7"/>
+  <rect class="c-ghost" x="98" y="182" width="14" height="38" rx="7"/>
+  <path class="c-ghost" d="M130 126 q26 -2 34 -22"/>
+  <path class="c-skin c-out" d="M94 98 C58 98 50 142 56 170 C62 194 126 194 132 170 C138 142 130 98 94 98 Z"/>
+  <path class="c-line" d="M58 130 q-22 -4 -32 -22"/>
+  <circle class="c-skin c-out" cx="94" cy="72" r="41"/>
+  <path class="c-fill" d="M94 36 C94 16 80 6 62 9 C68 28 80 34 94 36 Z"/>
+  <path class="c-fill" d="M94 36 C94 18 108 8 126 13 C118 30 106 34 94 36 Z" opacity=".7"/>
+  <circle class="c-ink" cx="82" cy="70" r="5"/>
+  <circle class="c-ink" cx="106" cy="70" r="5"/>
+  <circle class="c-cheek" cx="72" cy="82" r="6.5"/>
+  <circle class="c-cheek" cx="116" cy="82" r="6.5"/>
+  <path class="c-line" d="M82 85 Q94 95 106 85"/>
+</svg>
+      </div>
+      <div class="stage-cap">2 / 5 γράμματα</div>
+    </div>
+    <div class="word"><div class="tile filled">Η</div><div class="tile blank">Λ</div><div class="tile filled">Ι</div><div class="tile blank">Ο</div><div class="tile blank">Σ</div></div>
+    <div class="keyboard"><button class="key is-wrong">Α</button><button class="key">Β</button><button class="key">Γ</button><button class="key">Δ</button><button class="key">Ε</button><button class="key">Ζ</button><button class="key is-correct">Η</button><button class="key">Θ</button><button class="key is-correct">Ι</button><button class="key">Κ</button><button class="key">Λ</button><button class="key">Μ</button><button class="key">Ν</button><button class="key">Ξ</button><button class="key">Ο</button><button class="key is-press">Π</button><button class="key">Ρ</button><button class="key">Σ</button><button class="key is-wrong">Τ</button><button class="key">Υ</button><button class="key">Φ</button><button class="key">Χ</button><button class="key">Ψ</button><button class="key">Ω</button></div>
+  </div></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-label">MODAL TEMPLATES <span>· end-of-round overlay (Direction A)</span></div>
+    <div class="frames">
+      <div class="frame">
+        <div class="frame-cap"><span class="n">Victory</span><span class="d">word found</span></div>
+        
+<div class="phone t-pastel modal-screen">
+  
+  
+  <div class="statusbar">
+    <span>9:41</span>
+    <span class="sb-right"><i></i><i style="width:13px"></i><span class="bat"></span></span>
+  </div>
+  <div class="screen">
+    
+  <div class="nav">
+    <div class="brand">
+      <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2" fill="currentColor" stroke="none"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg></span>
+      <span class="brand-name">ΚΡΕΜΑΛΑ</span>
+    </div>
+    <div class="nav-right">
+      <div class="score">
+        <span class="stat win"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h12v3a6 6 0 0 1-12 0V4Z"/><path d="M10 12h4v4h-4z"/><rect x="8" y="18" width="8" height="2.4" rx="1.2"/></svg>3</span>
+        <span class="sep"></span>
+        <span class="stat loss"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>1</span>
+      </div>
+      <button class="icon-btn" aria-label="Reset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.5-5.8"/><path d="M20 4v4h-4"/></svg></button>
+    </div>
+  </div>
+    <div class="stage">
+      <div class="lives"><svg class="pip" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip lost" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip lost" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg></div>
+      <div class="char-wrap">
+        <div class="char-platform"></div>
+        
+<svg viewBox="0 0 188 230" aria-hidden="true">
+  <rect class="c-ghost" x="74" y="176" width="16" height="42" rx="8"/>
+  <rect class="c-ghost" x="98" y="176" width="16" height="42" rx="8"/>
+  <path class="c-ghost" d="M94 36 C94 20 82 12 70 14 C76 28 84 33 94 36 Z"/>
+  <rect class="c-ghost" x="126" y="116" width="38" height="18" rx="9" transform="rotate(22 145 125)"/>
+  <rect class="c-skin c-out" x="54" y="94" width="80" height="100" rx="40"/>
+  <ellipse class="c-soft" cx="94" cy="150" rx="27" ry="32"/>
+  <rect class="c-skin c-out" x="22" y="116" width="38" height="18" rx="9" transform="rotate(-22 41 125)"/>
+  <circle class="c-skin c-out" cx="94" cy="68" r="43"/>
+  <circle class="c-cheek" cx="72" cy="80" r="7.5"/>
+  <circle class="c-cheek" cx="116" cy="80" r="7.5"/>
+  <circle class="c-ink" cx="79" cy="64" r="5.6"/>
+  <circle class="c-ink" cx="109" cy="64" r="5.6"/>
+  <path class="c-line" d="M79 83 Q94 95 109 83"/>
+</svg>
+      </div>
+      <div class="stage-cap">2 / 5 γράμματα</div>
+    </div>
+    <div class="word"><div class="tile filled">Η</div><div class="tile blank">Λ</div><div class="tile filled">Ι</div><div class="tile blank">Ο</div><div class="tile blank">Σ</div></div>
+    <div class="keyboard"><button class="key is-wrong">Α</button><button class="key">Β</button><button class="key">Γ</button><button class="key">Δ</button><button class="key">Ε</button><button class="key">Ζ</button><button class="key is-correct">Η</button><button class="key">Θ</button><button class="key is-correct">Ι</button><button class="key">Κ</button><button class="key">Λ</button><button class="key">Μ</button><button class="key">Ν</button><button class="key">Ξ</button><button class="key">Ο</button><button class="key is-press">Π</button><button class="key">Ρ</button><button class="key">Σ</button><button class="key is-wrong">Τ</button><button class="key">Υ</button><button class="key">Φ</button><button class="key">Χ</button><button class="key">Ψ</button><button class="key">Ω</button></div>
+  </div>
+  <div class="scrim">
+    <div class="modal win">
+      <div class="badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h12v3a6 6 0 0 1-12 0V4Z"/><path d="M10 12h4v4h-4z"/><rect x="8" y="18" width="8" height="2.4" rx="1.2"/></svg></div>
+      <h3>ΝΙΚΗ!</h3>
+      <p class="msg">Βρήκες τη λέξη 🎉</p>
+      <div class="reveal"><span class="lab">Η λέξη</span><span>Η</span><span>Λ</span><span>Ι</span><span>Ο</span><span>Σ</span></div>
+      <div class="score-row">
+        <div>Νίκες<b>4</b></div>
+        <div>Ήττες<b>1</b></div>
+      </div>
+      <button class="btn">Νέα λέξη</button>
+      <button class="btn ghost">Αρχική</button>
+    </div>
+  </div>
+</div>
+      </div>
+      <div class="frame">
+        <div class="frame-cap"><span class="n">Game Over</span><span class="d">out of tries</span></div>
+        
+<div class="phone t-pastel modal-screen">
+  
+  
+  <div class="statusbar">
+    <span>9:41</span>
+    <span class="sb-right"><i></i><i style="width:13px"></i><span class="bat"></span></span>
+  </div>
+  <div class="screen">
+    
+  <div class="nav">
+    <div class="brand">
+      <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2" fill="currentColor" stroke="none"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg></span>
+      <span class="brand-name">ΚΡΕΜΑΛΑ</span>
+    </div>
+    <div class="nav-right">
+      <div class="score">
+        <span class="stat win"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h12v3a6 6 0 0 1-12 0V4Z"/><path d="M10 12h4v4h-4z"/><rect x="8" y="18" width="8" height="2.4" rx="1.2"/></svg>3</span>
+        <span class="sep"></span>
+        <span class="stat loss"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>1</span>
+      </div>
+      <button class="icon-btn" aria-label="Reset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.5-5.8"/><path d="M20 4v4h-4"/></svg></button>
+    </div>
+  </div>
+    <div class="stage">
+      <div class="lives"><svg class="pip" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip lost" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg><svg class="pip lost" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.3-8.2C1.1 9.6 2.9 6 6.2 6c2 0 3.2 1.1 3.9 2.4C10.8 7.1 12 6 14 6c3.3 0 5.1 3.6 3.5 6.8C19 16.6 12 21 12 21Z"/></svg></div>
+      <div class="char-wrap">
+        <div class="char-platform"></div>
+        
+<svg viewBox="0 0 188 230" aria-hidden="true">
+  <rect class="c-ghost" x="74" y="176" width="16" height="42" rx="8"/>
+  <rect class="c-ghost" x="98" y="176" width="16" height="42" rx="8"/>
+  <path class="c-ghost" d="M94 36 C94 20 82 12 70 14 C76 28 84 33 94 36 Z"/>
+  <rect class="c-ghost" x="126" y="116" width="38" height="18" rx="9" transform="rotate(22 145 125)"/>
+  <rect class="c-skin c-out" x="54" y="94" width="80" height="100" rx="40"/>
+  <ellipse class="c-soft" cx="94" cy="150" rx="27" ry="32"/>
+  <rect class="c-skin c-out" x="22" y="116" width="38" height="18" rx="9" transform="rotate(-22 41 125)"/>
+  <circle class="c-skin c-out" cx="94" cy="68" r="43"/>
+  <circle class="c-cheek" cx="72" cy="80" r="7.5"/>
+  <circle class="c-cheek" cx="116" cy="80" r="7.5"/>
+  <circle class="c-ink" cx="79" cy="64" r="5.6"/>
+  <circle class="c-ink" cx="109" cy="64" r="5.6"/>
+  <path class="c-line" d="M79 83 Q94 95 109 83"/>
+</svg>
+      </div>
+      <div class="stage-cap">2 / 5 γράμματα</div>
+    </div>
+    <div class="word"><div class="tile filled">Η</div><div class="tile blank">Λ</div><div class="tile filled">Ι</div><div class="tile blank">Ο</div><div class="tile blank">Σ</div></div>
+    <div class="keyboard"><button class="key is-wrong">Α</button><button class="key">Β</button><button class="key">Γ</button><button class="key">Δ</button><button class="key">Ε</button><button class="key">Ζ</button><button class="key is-correct">Η</button><button class="key">Θ</button><button class="key is-correct">Ι</button><button class="key">Κ</button><button class="key">Λ</button><button class="key">Μ</button><button class="key">Ν</button><button class="key">Ξ</button><button class="key">Ο</button><button class="key is-press">Π</button><button class="key">Ρ</button><button class="key">Σ</button><button class="key is-wrong">Τ</button><button class="key">Υ</button><button class="key">Φ</button><button class="key">Χ</button><button class="key">Ψ</button><button class="key">Ω</button></div>
+  </div>
+  <div class="scrim">
+    <div class="modal over">
+      <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.5-5.8"/><path d="M4 4v4h4"/></svg></div>
+      <h3>ΚΡΙΜΑ!</h3>
+      <p class="msg">Σχεδόν τα κατάφερες</p>
+      <div class="reveal"><span class="lab">Η λέξη</span><span>Η</span><span>Λ</span><span>Ι</span><span>Ο</span><span>Σ</span></div>
+      <div class="score-row">
+        <div>Νίκες<b>3</b></div>
+        <div>Ήττες<b>2</b></div>
+      </div>
+      <button class="btn">Δοκίμασε ξανά</button>
+      <button class="btn ghost">Αρχική</button>
+    </div>
+  </div>
+</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+</body>
+</html>
