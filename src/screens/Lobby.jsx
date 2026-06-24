@@ -13,7 +13,7 @@ export default function Lobby({ room, session, onHome }) {
   const isReadyCheck = room?.status === 'ready-check'
 
   const myRole = players[myId]?.role
-  const isHost = myRole === 'host' || myRole === 'setter'
+  const isHost = myRole === 'host'
   const allReady = playerCount >= 2 && playerIds.every(id => ready[id])
 
   // Auto-start: μόλις είναι όλοι (≥2) έτοιμοι, ο host ξεκινάει το παιχνίδι.
@@ -24,11 +24,11 @@ export default function Lobby({ room, session, onHome }) {
     }
   }, [isReadyCheck, isHost, allReady])
 
-  // Μήνυμα όσο ο setter διαλέγει λέξη (φάση setting-word, βλέπουν οι guessers)
+  // Μήνυμα όσο ο setter του γύρου διαλέγει λέξη (φάση setting-word, βλέπουν οι υπόλοιποι)
   let statusMsg = ''
   if (isSettingWord) {
-    const setter = Object.values(players).find(p => p.role === 'setter')
-    statusMsg = `${setter?.name || 'Ο setter'} επιλέγει λέξη...`
+    const setterName = players[room?.setterPid]?.name
+    statusMsg = `${setterName || 'Ο παίκτης'} επιλέγει λέξη...`
   }
 
   async function handleReady() {

@@ -2,6 +2,7 @@ import Character from '../components/Character'
 import Keyboard from '../components/Keyboard'
 import WordDisplay from '../components/WordDisplay'
 import LivesPips from '../components/LivesPips'
+import GuessFeed from '../components/GuessFeed'
 import { resetRoom } from '../hooks/useRoom'
 
 function BrandSvg() {
@@ -24,8 +25,10 @@ export default function Watch({ room, session, onHome }) {
   const isFinished = room?.status === 'finished'
   const isWon = gameStatus === 'won'
 
-  const guesserName = Object.values(room?.players || {})
-    .find(p => p.role === 'guesser')?.name || 'Guesser'
+  const players = room?.players || {}
+  const log = gameState.log || []
+  const guesserCount = Object.keys(players).filter(pid => pid !== room?.setterPid).length
+  const guesserName = guesserCount === 1 ? 'Ο παίκτης' : 'Οι παίκτες'
   const unique = new Set(word)
   const found = [...unique].filter(l => guessed[l]).length
 
@@ -60,6 +63,8 @@ export default function Watch({ room, session, onHome }) {
       {/* Read-only keyboard showing guesser's guesses */}
       <Keyboard word={word} guessed={guessed} onGuess={() => {}} disabled={true} />
 
+      <GuessFeed log={log} players={players} />
+
       {isFinished && (
         <div className="scrim" role="dialog" aria-modal="true">
           <div className={`modal ${isWon ? 'win' : 'over'}`}>
@@ -69,7 +74,7 @@ export default function Watch({ room, session, onHome }) {
                 : <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" width="40" height="40"><path d="M4 12a8 8 0 1 0 2.5-5.8"/><path d="M4 4v4h4"/></svg>
               }
             </div>
-            <h3>{isWon ? `${guesserName} νίκησε!` : 'Δεν τα κατάφερε'}</h3>
+            <h3>{isWon ? 'Βρήκαν τη λέξη!' : 'Δεν τα κατάφεραν'}</h3>
             <p className="msg">{isWon ? 'Η λέξη σου βρέθηκε!' : 'Η λέξη έμεινε κρυφή'}</p>
             <div className="reveal">
               <span className="lab">Η λέξη σου</span>

@@ -14,10 +14,11 @@ function deriveScreen(room, myId) {
   const { mode, status } = room
   if (status === 'ready-check') return 'lobby'
   if (mode === 'setter-guesser') {
+    const iAmSetter = room.setterPid === myId
     if (status === 'setting-word')
-      return room.players?.[myId]?.role === 'setter' ? 'set-word' : 'lobby'
+      return iAmSetter ? 'set-word' : 'lobby'
     if (status === 'playing' || status === 'finished')
-      return room.players?.[myId]?.role === 'setter' ? 'watch' : 'game'
+      return iAmSetter ? 'watch' : 'game'
   }
   if (mode === 'race') {
     if (status === 'playing' || status === 'finished') return 'race'

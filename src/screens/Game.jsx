@@ -3,6 +3,7 @@ import Character from '../components/Character'
 import Keyboard from '../components/Keyboard'
 import WordDisplay from '../components/WordDisplay'
 import LivesPips from '../components/LivesPips'
+import GuessFeed from '../components/GuessFeed'
 import { guessLetter, resetRoom } from '../hooks/useRoom'
 
 function BrandSvg() {
@@ -27,15 +28,16 @@ export default function Game({ room, session, onHome }) {
   const isFinished = room?.status === 'finished'
   const isWon = gameStatus === 'won'
 
-  const setterName = Object.values(room?.players || {})
-    .find(p => p.role === 'setter')?.name || 'Setter'
+  const players = room?.players || {}
+  const setterName = players[room?.setterPid]?.name || 'Setter'
+  const log = gameState.log || []
   const unique = new Set(word)
   const found = [...unique].filter(l => guessed[l]).length
 
   async function handleGuess(letter) {
     if (isFinished || gameStatus !== 'playing') return
     setLastGuessed(letter)
-    await guessLetter(session.roomCode, letter, word, guessed, lives)
+    await guessLetter(session.roomCode, session.myId, letter, word, guessed, lives, log)
   }
 
   async function handleReset() {
@@ -65,6 +67,8 @@ export default function Game({ room, session, onHome }) {
       <WordDisplay word={word} guessed={guessed} revealed={gameStatus === 'lost'} lastGuessed={lastGuessed} />
 
       <Keyboard word={word} guessed={guessed} onGuess={handleGuess} disabled={isFinished} />
+
+      <GuessFeed log={log} players={players} />
 
       {isFinished && (
         <div className="scrim" role="dialog" aria-modal="true">

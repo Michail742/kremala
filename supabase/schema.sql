@@ -10,6 +10,7 @@ create table if not exists public.rooms (
   status      text not null default 'ready-check', -- ready-check | setting-word | playing | finished
   word        text,
   winner      text,                                 -- pid του νικητή (race)
+  setter_pid  text,                                 -- pid του παίκτη που δίνει λέξη αυτόν τον γύρο (setter-guesser, εναλλάσσεται)
   created_at  bigint not null                       -- epoch ms (χρησιμοποιείται για επιλογή λέξης)
 );
 
@@ -26,9 +27,10 @@ create table if not exists public.players (
 create table if not exists public.states (
   code     text not null references public.rooms(code) on delete cascade,
   pid      text not null,                           -- pid παίκτη (race) ή 'shared' (setter-guesser)
-  guessed  jsonb not null default '{}'::jsonb,
+  guessed  jsonb not null default '{}'::jsonb,       -- { γράμμα: pid_παίκτη_που_το_έπαιξε }
   lives    int  not null default 6,
   status   text not null default 'playing',         -- playing | won | lost
+  log      jsonb not null default '[]'::jsonb,       -- [{pid, letter, hit}] — ιστορικό κινήσεων (κοινό board)
   primary key (code, pid)
 );
 

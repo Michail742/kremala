@@ -106,7 +106,7 @@ export default function Home({ onJoin, onSolo, skinId, onSkinChange }) {
           >
             <div className="mode-icon"><IconChat /></div>
             <span className="mode-name">Setter / Guesser</span>
-            <span className="mode-desc">Ένας δίνει τη λέξη, οι άλλοι μαντεύουν</span>
+            <span className="mode-desc">Με τη σειρά ο καθένας δίνει λέξη, οι άλλοι μαντεύουν</span>
           </button>
           <button
             className={`mode-card${mode === 'race' ? ' active' : ''}`}

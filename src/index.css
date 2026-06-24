@@ -291,6 +291,30 @@ svg { display: block; }
 }
 
 /* ============================================================
+   GUESS FEED (κοινό board — ποιος έπαιξε ποιο γράμμα)
+   ============================================================ */
+.guess-feed {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  justify-content: center; align-content: flex-start;
+  padding: 10px 12px 0; max-height: 96px; overflow: hidden;
+}
+.guess-feed-item {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 8px 4px 10px; border-radius: 999px;
+  border: 1px solid var(--hair); background: var(--surface);
+  font-size: 12px; font-weight: 700; line-height: 1;
+}
+.guess-feed-name { color: var(--ink); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.guess-feed-letter {
+  display: inline-grid; place-items: center;
+  min-width: 18px; height: 18px; padding: 0 4px;
+  border-radius: 6px; font-weight: 900;
+}
+.guess-feed-item.hit .guess-feed-letter { background: var(--good-soft); color: var(--good-ink); }
+.guess-feed-item.miss { opacity: .6; }
+.guess-feed-item.miss .guess-feed-letter { background: var(--hair); color: var(--muted); }
+
+/* ============================================================
    MODALS
    ============================================================ */
 .scrim {

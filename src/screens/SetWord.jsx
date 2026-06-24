@@ -12,7 +12,9 @@ export default function SetWord({ room, session, onHome }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const guessers = Object.values(room?.players || {}).filter(p => p.role === 'guesser')
+  const guessers = Object.entries(room?.players || {})
+    .filter(([pid]) => pid !== room?.setterPid)
+    .map(([, p]) => p)
   const guesserName =
     guessers.length === 1 ? `Ο ${guessers[0].name}`
     : guessers.length > 1 ? `Οι ${guessers.length} παίκτες`

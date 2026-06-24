@@ -39,7 +39,7 @@ function composeRoom(roomRow, playerRows, stateRows) {
   const raceStates = {}
   let gameState = null
   for (const s of stateRows || []) {
-    const st = { guessed: s.guessed || {}, livesRemaining: s.lives, status: s.status }
+    const st = { guessed: s.guessed || {}, livesRemaining: s.lives, status: s.status, log: s.log || [] }
     if (s.pid === SHARED) gameState = st
     else raceStates[s.pid] = st
   }
@@ -49,6 +49,7 @@ function composeRoom(roomRow, playerRows, stateRows) {
     status: roomRow.status,
     word: roomRow.word,
     winner: roomRow.winner,
+    setterPid: roomRow.setter_pid,
     createdAt: roomRow.created_at,
     players,
     ready,
@@ -72,7 +73,7 @@ export async function createRoom(myId, myName, mode) {
     code,
     pid: myId,
     name: myName,
-    role: mode === 'setter-guesser' ? 'setter' : 'host',
+    role: 'host', // ο δημιουργός είναι σταθερός host (ξεκινά τον γύρο)· ο setter εναλλάσσεται ανά γύρο
     joined_at: Date.now(),
   })
   return code
@@ -87,12 +88,11 @@ export async function joinRoom(myId, myName, code) {
   if ((players || []).length >= MAX_PLAYERS) throw new Error('Το δωμάτιο είναι γεμάτο')
   if (room.status !== 'ready-check') throw new Error('Το παιχνίδι έχει ήδη ξεκινήσει')
 
-  const role = room.mode === 'setter-guesser' ? 'guesser' : 'player'
   const { error } = await supabase.from('players').insert({
     code,
     pid: myId,
     name: myName,
-    role,
+    role: 'player',
     joined_at: Date.now(),
   })
   if (error) throw new Error('Σφάλμα συμμετοχής')
@@ -102,6 +102,13 @@ export async function markReady(code, myId) {
   await supabase.from('players').update({ ready: true }).eq('code', code).eq('pid', myId)
 }
 
+// Επιλέγει τον επόμενο setter (εναλλαγή με σειρά εισόδου). null prev -> ο πρώτος.
+function nextSetter(orderedPids, prevSetter) {
+  if (orderedPids.length === 0) return null
+  const idx = orderedPids.indexOf(prevSetter)
+  return idx === -1 ? orderedPids[0] : orderedPids[(idx + 1) % orderedPids.length]
+}
+
 // Καλείται μόνο από τον host όταν είναι όλοι έτοιμοι.
 export async function startGame(code, mode, playerIds) {
   if (mode === 'race') {
@@ -109,27 +116,35 @@ export async function startGame(code, mode, playerIds) {
     await supabase.from('states').upsert(rows)
     await supabase.from('rooms').update({ status: 'playing' }).eq('code', code)
   } else {
-    await supabase.from('rooms').update({ status: 'setting-word' }).eq('code', code)
+    // Setter εναλλασσόμενος: βρες τους παίκτες με σειρά εισόδου και διάλεξε τον επόμενο.
+    const [{ data: players }, { data: room }] = await Promise.all([
+      supabase.from('players').select('pid').eq('code', code).order('joined_at', { ascending: true }),
+      supabase.from('rooms').select('setter_pid').eq('code', code).maybeSingle(),
+    ])
+    const orderedPids = (players || []).map(p => p.pid)
+    const setterPid = nextSetter(orderedPids, room?.setter_pid)
+    await supabase.from('rooms').update({ setter_pid: setterPid, status: 'setting-word' }).eq('code', code)
   }
 }
 
 export async function setWord(code, word) {
   await supabase.from('states').upsert({
-    code, pid: SHARED, guessed: {}, lives: 6, status: 'playing',
+    code, pid: SHARED, guessed: {}, lives: 6, status: 'playing', log: [],
   })
   await supabase.from('rooms').update({ word, status: 'playing' }).eq('code', code)
 }
 
-// Setter/Guesser — κοινό board
-export async function guessLetter(code, letter, word, guessed, lives) {
-  const newGuessed = { ...guessed, [letter]: true }
+// Setter/Guesser — κοινό board. Αποθηκεύει ΠΟΙΟΣ έπαιξε κάθε γράμμα (myId) + ιστορικό.
+export async function guessLetter(code, myId, letter, word, guessed, lives, log) {
+  const newGuessed = { ...guessed, [letter]: myId }
   const hit = word.includes(letter)
   const newLives = hit ? lives : lives - 1
   const allFound = [...new Set(word)].every(l => newGuessed[l])
   const status = allFound ? 'won' : newLives <= 0 ? 'lost' : 'playing'
+  const newLog = [...(log || []), { pid: myId, letter, hit }]
 
   await supabase.from('states')
-    .update({ guessed: newGuessed, lives: newLives, status })
+    .update({ guessed: newGuessed, lives: newLives, status, log: newLog })
     .eq('code', code).eq('pid', SHARED)
 
   if (status !== 'playing') {
