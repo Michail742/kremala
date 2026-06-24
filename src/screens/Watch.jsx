@@ -29,8 +29,6 @@ export default function Watch({ room, session, onHome }) {
   const log = gameState.log || []
   const guesserCount = Object.keys(players).filter(pid => pid !== room?.setterPid).length
   const guesserName = guesserCount === 1 ? 'Ο παίκτης' : 'Οι παίκτες'
-  const unique = new Set(word)
-  const found = [...unique].filter(l => guessed[l]).length
 
   async function handleReset() {
     await resetRoom(session.roomCode, room.mode)
@@ -53,7 +51,7 @@ export default function Watch({ room, session, onHome }) {
           <Character wrongGuesses={wrongGuesses} />
         </div>
         <div className="stage-cap" aria-live="polite">
-          {guesserName}: {found} / {unique.size} γράμματα
+          {guesserName} {guesserCount === 1 ? 'μαντεύει' : 'μαντεύουν'}…
         </div>
       </div>
 

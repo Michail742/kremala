@@ -30,7 +30,6 @@ export default function Race({ room, session, onHome }) {
   const myStatus = myState.status || 'playing'
   const wrongGuesses = 6 - myLives
   const unique = new Set(word)
-  const found = [...unique].filter(l => myGuessed[l]).length
 
   const isFinished = room?.status === 'finished'
   const winner = room?.winner
@@ -93,9 +92,7 @@ export default function Race({ room, session, onHome }) {
           <Character wrongGuesses={wrongGuesses} />
         </div>
         <div className="stage-cap" aria-live="polite">
-          {myStatus === 'lost' && !isFinished
-            ? 'Έχασες — περιμένεις τους άλλους'
-            : `${found} / ${unique.size} γράμματα`}
+          {myStatus === 'lost' && !isFinished ? 'Έχασες — περιμένεις τους άλλους' : ''}
         </div>
       </div>
 

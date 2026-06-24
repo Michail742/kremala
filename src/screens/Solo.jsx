@@ -32,8 +32,6 @@ export default function Solo({ onHome }) {
   const [score, setScore] = useState(loadScore)
   const [lastGuessed, setLastGuessed] = useState(null)
 
-  const unique = new Set(word)
-  const found = [...unique].filter(l => guessed[l]).length
   const wrongGuesses = 6 - lives
 
   function handleGuess(letter) {
@@ -111,7 +109,6 @@ export default function Solo({ onHome }) {
           <div className="char-platform" />
           <Character wrongGuesses={wrongGuesses} />
         </div>
-        <div className="stage-cap" aria-live="polite">{found} / {unique.size} γράμματα</div>
       </div>
 
       <WordDisplay word={word} guessed={guessed} revealed={isLost} lastGuessed={lastGuessed} />

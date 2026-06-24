@@ -31,8 +31,6 @@ export default function Game({ room, session, onHome }) {
   const players = room?.players || {}
   const setterName = players[room?.setterPid]?.name || 'Setter'
   const log = gameState.log || []
-  const unique = new Set(word)
-  const found = [...unique].filter(l => guessed[l]).length
 
   async function handleGuess(letter) {
     if (isFinished || gameStatus !== 'playing') return
@@ -61,7 +59,6 @@ export default function Game({ room, session, onHome }) {
           <div className="char-platform" />
           <Character wrongGuesses={wrongGuesses} />
         </div>
-        <div className="stage-cap" aria-live="polite">{found} / {unique.size} γράμματα</div>
       </div>
 
       <WordDisplay word={word} guessed={guessed} revealed={gameStatus === 'lost'} lastGuessed={lastGuessed} />
