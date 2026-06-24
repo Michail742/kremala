@@ -4,6 +4,7 @@ import { WORDS } from '../data'
 
 const CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
 export const MAX_PLAYERS = 8
+export const WIN_BONUS = 3 // πόντοι bonus για νίκη γύρου (ίδιο με το server)
 const SHARED = 'shared' // pid για το κοινό board στο setter-guesser
 
 export function getPlayerId() {
@@ -50,6 +51,7 @@ function composeRoom(roomRow, playerRows, stateRows) {
     word: roomRow.word,
     winner: roomRow.winner,
     setterPid: roomRow.setter_pid,
+    scores: roomRow.scores || {},
     createdAt: roomRow.created_at,
     players,
     ready,
@@ -112,9 +114,10 @@ function nextSetter(orderedPids, prevSetter) {
 // Καλείται μόνο από τον host όταν είναι όλοι έτοιμοι.
 export async function startGame(code, mode, playerIds) {
   if (mode === 'race') {
+    const word = WORDS[Math.floor(Math.random() * WORDS.length)]
     const rows = playerIds.map(pid => ({ code, pid, guessed: {}, lives: 6, status: 'playing' }))
     await supabase.from('states').upsert(rows)
-    await supabase.from('rooms').update({ status: 'playing' }).eq('code', code)
+    await supabase.from('rooms').update({ status: 'playing', word }).eq('code', code)
   } else {
     // Setter εναλλασσόμενος: βρες τους παίκτες με σειρά εισόδου και διάλεξε τον επόμενο.
     const [{ data: players }, { data: room }] = await Promise.all([
@@ -153,7 +156,11 @@ export async function guessLetterRace(code, myId, letter, word, guessed, lives, 
     .update({ guessed: newGuessed, lives: newLives, status: myStatus })
     .eq('code', code).eq('pid', myId)
 
+  // Πόντοι (ατομικό increment στον server): +1 σωστό γράμμα, +bonus για νίκη.
+  if (hit) await supabase.rpc('kremala_add_score', { p_code: code, p_pid: myId, p_points: 1 })
+
   if (myStatus === 'won') {
+    await supabase.rpc('kremala_add_score', { p_code: code, p_pid: myId, p_points: WIN_BONUS })
     await supabase.from('rooms').update({ status: 'finished', winner: myId }).eq('code', code)
   } else if (myStatus === 'lost') {
     // Τελειώνει μόνο αν δεν έμεινε κανείς άλλος να παίζει

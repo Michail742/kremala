@@ -3,6 +3,7 @@ import Keyboard from '../components/Keyboard'
 import WordDisplay from '../components/WordDisplay'
 import LivesPips from '../components/LivesPips'
 import GuessFeed from '../components/GuessFeed'
+import Scoreboard from '../components/Scoreboard'
 import { resetRoom } from '../hooks/useRoom'
 
 function BrandSvg() {
@@ -78,6 +79,7 @@ export default function Watch({ room, session, onHome }) {
               <span className="lab">Η λέξη σου</span>
               {[...word].map((l, i) => <span key={i}>{l}</span>)}
             </div>
+            <Scoreboard players={players} scores={room?.scores} myId={session?.myId} />
             <button className="btn" style={{ marginTop: '18px' }} onClick={handleReset}>Νέο παιχνίδι</button>
             <button className="btn ghost" onClick={onHome}>Έξοδος</button>
           </div>

@@ -3,8 +3,8 @@ import Character from '../components/Character'
 import Keyboard from '../components/Keyboard'
 import WordDisplay from '../components/WordDisplay'
 import LivesPips from '../components/LivesPips'
+import Scoreboard from '../components/Scoreboard'
 import { guessLetterRace, resetRoom } from '../hooks/useRoom'
-import { wordForRoom } from '../data'
 
 function BrandSvg() {
   return (
@@ -19,7 +19,7 @@ function BrandSvg() {
 export default function Race({ room, session, onHome }) {
   const [lastGuessed, setLastGuessed] = useState(null)
 
-  const word = wordForRoom(room)
+  const word = room?.word || ''
   const myId = session?.myId
   const players = room?.players || {}
   const raceStates = room?.raceStates || {}
@@ -122,6 +122,7 @@ export default function Race({ room, session, onHome }) {
               <span className="lab">Η λέξη</span>
               {[...word].map((l, i) => <span key={i}>{l}</span>)}
             </div>
+            <Scoreboard players={players} scores={room?.scores} myId={myId} />
             <button className="btn" style={{ marginTop: '18px' }} onClick={handleReset}>Ξανά!</button>
             <button className="btn ghost" onClick={onHome}>Έξοδος</button>
           </div>

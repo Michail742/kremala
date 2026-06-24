@@ -322,6 +322,33 @@ svg { display: block; }
 .guess-feed-item.miss .guess-feed-letter { background: var(--hair); color: var(--muted); }
 
 /* ============================================================
+   SCOREBOARD (βαθμολογία δωματίου)
+   ============================================================ */
+.scoreboard {
+  width: 100%; max-width: 360px; margin: 4px auto 0;
+  background: var(--surface); border: 1px solid var(--hair);
+  border-radius: 16px; padding: 10px 12px;
+}
+.scoreboard-title {
+  font-size: 11px; font-weight: 800; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--muted);
+  text-align: center; margin-bottom: 6px;
+}
+.scoreboard-list { display: flex; flex-direction: column; gap: 2px; }
+.scoreboard-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 8px; border-radius: 10px;
+  font-size: 14px; font-weight: 700; color: var(--ink);
+}
+.scoreboard-row.me { background: var(--accent-soft); }
+.scoreboard-rank { width: 18px; color: var(--muted); font-weight: 800; }
+.scoreboard-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.scoreboard-pts {
+  min-width: 26px; text-align: center; font-weight: 900;
+  color: var(--accent-strong);
+}
+
+/* ============================================================
    MODALS
    ============================================================ */
 .scrim {

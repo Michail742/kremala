@@ -11,6 +11,7 @@ create table if not exists public.rooms (
   word        text,
   winner      text,                                 -- pid του νικητή (race)
   setter_pid  text,                                 -- pid του παίκτη που δίνει λέξη αυτόν τον γύρο (setter-guesser, εναλλάσσεται)
+  scores      jsonb not null default '{}'::jsonb,    -- { pid: πόντοι } — βαθμολογία δωματίου, μαζεύει σε όλους τους γύρους
   created_at  bigint not null                       -- epoch ms (χρησιμοποιείται για επιλογή λέξης)
 );
 
@@ -73,7 +74,7 @@ create or replace function public.kremala_guess(p_code text, p_pid text, p_lette
 returns void language plpgsql as $$
 declare
   v_word text; v_guessed jsonb; v_log jsonb;
-  v_hit boolean; v_wrong int; v_lives int; v_allfound boolean; v_status text;
+  v_hit boolean; v_wrong int; v_lives int; v_allfound boolean; v_status text; v_pts int;
 begin
   select word into v_word from public.rooms where code = p_code;
   if v_word is null then return; end if;
@@ -100,12 +101,30 @@ begin
   update public.states set guessed = v_guessed, log = v_log, lives = v_lives, status = v_status
     where code = p_code and pid = 'shared';
 
+  -- πόντοι: +1 σωστό γράμμα, +3 bonus σε όποιον κλείνει τη λέξη
+  v_pts := (case when v_hit then 1 else 0 end) + (case when v_status = 'won' then 3 else 0 end);
+  if v_pts > 0 then
+    update public.rooms set scores = jsonb_set(coalesce(scores, '{}'::jsonb), array[p_pid],
+        to_jsonb(coalesce((scores->>p_pid)::int, 0) + v_pts)) where code = p_code;
+  end if;
+
   if v_status <> 'playing' then
     update public.rooms set status = 'finished' where code = p_code;
   end if;
 end; $$;
 
 grant execute on function public.kremala_guess(text, text, text) to anon, authenticated;
+
+-- Ατομικό increment βαθμολογίας (race mode + win bonus): ένα locked UPDATE ανά κλήση,
+-- ώστε ταυτόχρονες αυξήσεις πόντων να μη χάνονται.
+create or replace function public.kremala_add_score(p_code text, p_pid text, p_points int)
+returns void language sql as $$
+  update public.rooms
+    set scores = jsonb_set(coalesce(scores, '{}'::jsonb), array[p_pid],
+        to_jsonb(coalesce((scores->>p_pid)::int, 0) + p_points))
+    where code = p_code;
+$$;
+grant execute on function public.kremala_add_score(text, text, int) to anon, authenticated;
 
 
 -- ╔══════════════════════════════════════════════════════════════════════════╗
