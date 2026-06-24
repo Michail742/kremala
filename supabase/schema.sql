@@ -85,7 +85,9 @@ begin
 
   v_hit := position(p_letter in v_word) > 0;
   v_guessed := v_guessed || jsonb_build_object(p_letter, p_pid);
-  v_log := coalesce(v_log, '[]'::jsonb) || jsonb_build_object('pid', p_pid, 'letter', p_letter, 'hit', v_hit);
+  v_log := coalesce(v_log, '[]'::jsonb) || jsonb_build_object(
+             'pid', p_pid, 'letter', p_letter, 'hit', v_hit,
+             't', (extract(epoch from clock_timestamp()) * 1000)::bigint);
 
   select count(*) into v_wrong from jsonb_object_keys(v_guessed) k where position(k in v_word) = 0;
   v_lives := 6 - v_wrong;
