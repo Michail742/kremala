@@ -25,10 +25,6 @@ export default function Race({ room, session, onHome }) {
   const raceStates = room?.raceStates || {}
 
   const myState = raceStates[myId] || { guessed: {}, livesRemaining: 6, status: 'playing' }
-  const opponentId = Object.keys(players).find(id => id !== myId)
-  const opponentState = opponentId ? raceStates[opponentId] : null
-  const opponentName = opponentId ? players[opponentId]?.name : '?'
-
   const myGuessed = myState.guessed || {}
   const myLives = myState.livesRemaining ?? 6
   const myStatus = myState.status || 'playing'
@@ -39,16 +35,29 @@ export default function Race({ room, session, onHome }) {
   const isFinished = room?.status === 'finished'
   const winner = room?.winner
   const iWon = winner === myId
-  const theyWon = winner && winner !== myId
+  const winnerName = winner ? players[winner]?.name : null
 
-  const oppGuessed = opponentState?.guessed || {}
-  const oppLives = opponentState?.livesRemaining ?? 6
-  const oppFound = opponentState ? [...unique].filter(l => oppGuessed[l]).length : 0
+  // Όλοι οι αντίπαλοι (όλοι πλην εμένα)
+  const opponents = Object.keys(players)
+    .filter(id => id !== myId)
+    .map(id => {
+      const st = raceStates[id] || { guessed: {}, livesRemaining: 6, status: 'playing' }
+      const g = st.guessed || {}
+      return {
+        id,
+        name: players[id]?.name || '?',
+        lives: st.livesRemaining ?? 6,
+        status: st.status || 'playing',
+        found: [...unique].filter(l => g[l]).length,
+      }
+    })
+
+  const canPlay = !isFinished && myStatus === 'playing'
 
   async function handleGuess(letter) {
-    if (isFinished || myStatus !== 'playing') return
+    if (!canPlay) return
     setLastGuessed(letter)
-    await guessLetterRace(session.roomCode, myId, letter, word, myGuessed, myLives)
+    await guessLetterRace(session.roomCode, myId, letter, word, myGuessed, myLives, raceStates)
   }
 
   async function handleReset() {
@@ -58,16 +67,22 @@ export default function Race({ room, session, onHome }) {
 
   return (
     <div className="app t-mint">
-      {/* Opponent status card */}
-      {opponentState && (
-        <div className="opponent-card">
-          <span className="opp-name">{opponentName}</span>
-          <div className="opp-lives">
-            {Array.from({ length: 6 }, (_, i) => (
-              <span key={i} className={`opp-pip${i < oppLives ? '' : ' lost'}`} />
-            ))}
-          </div>
-          <span className="opp-letters">{oppFound}/{unique.size}</span>
+      {/* Κάρτες αντιπάλων */}
+      {opponents.length > 0 && (
+        <div className="opponent-list">
+          {opponents.map(o => (
+            <div key={o.id} className={`opponent-card${o.status === 'lost' ? ' lost' : ''}${o.status === 'won' ? ' won' : ''}`}>
+              <span className="opp-name">{o.name}</span>
+              <div className="opp-lives">
+                {Array.from({ length: 6 }, (_, i) => (
+                  <span key={i} className={`opp-pip${i < o.lives ? '' : ' lost'}`} />
+                ))}
+              </div>
+              <span className="opp-letters">
+                {o.status === 'won' ? '🏆' : o.status === 'lost' ? '💀' : `${o.found}/${unique.size}`}
+              </span>
+            </div>
+          ))}
         </div>
       )}
 
@@ -77,7 +92,11 @@ export default function Race({ room, session, onHome }) {
           <div className="char-platform" />
           <Character wrongGuesses={wrongGuesses} />
         </div>
-        <div className="stage-cap" aria-live="polite">{found} / {unique.size} γράμματα</div>
+        <div className="stage-cap" aria-live="polite">
+          {myStatus === 'lost' && !isFinished
+            ? 'Έχασες — περιμένεις τους άλλους'
+            : `${found} / ${unique.size} γράμματα`}
+        </div>
       </div>
 
       <WordDisplay
@@ -87,7 +106,7 @@ export default function Race({ room, session, onHome }) {
         lastGuessed={lastGuessed}
       />
 
-      <Keyboard word={word} guessed={myGuessed} onGuess={handleGuess} disabled={isFinished} />
+      <Keyboard word={word} guessed={myGuessed} onGuess={handleGuess} disabled={!canPlay} />
 
       {isFinished && (
         <div className="scrim" role="dialog" aria-modal="true">
@@ -98,9 +117,9 @@ export default function Race({ room, session, onHome }) {
                 : <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" width="40" height="40"><path d="M4 12a8 8 0 1 0 2.5-5.8"/><path d="M4 4v4h4"/></svg>
               }
             </div>
-            <h3>{iWon ? 'ΝΙΚΗ!' : theyWon ? `${opponentName} νίκησε!` : 'ΚΡΙΜΑ!'}</h3>
+            <h3>{iWon ? 'ΝΙΚΗ!' : winnerName ? `${winnerName} νίκησε!` : 'ΚΡΙΜΑ!'}</h3>
             <p className="msg">
-              {iWon ? 'Έλυσες πρώτος!' : theyWon ? 'Ήσουν κοντά' : 'Δεν τα κατάφερε κανείς'}
+              {iWon ? 'Έλυσες πρώτος!' : winnerName ? 'Ήσουν κοντά' : 'Δεν τα κατάφερε κανείς'}
             </p>
             <div className="reveal">
               <span className="lab">Η λέξη</span>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { createRoom, joinRoom, getPlayerId } from '../hooks/useRoom'
+import SkinPicker from '../components/SkinPicker'
 
 function IconSolo() {
   return (
@@ -27,7 +28,7 @@ function IconBolt() {
   )
 }
 
-export default function Home({ onJoin, onSolo }) {
+export default function Home({ onJoin, onSolo, skinId, onSkinChange }) {
   const [nickname, setNickname] = useState(() => localStorage.getItem('kremala-name') || '')
   const [mode, setMode] = useState(null)
   const [action, setAction] = useState(null)
@@ -94,7 +95,7 @@ export default function Home({ onJoin, onSolo }) {
         </button>
 
         {/* Divider */}
-        <div className="mode-divider"><span>ή παίξε με φίλο</span></div>
+        <div className="mode-divider"><span>ή παίξε με φίλους (έως 8)</span></div>
 
         {/* Multiplayer modes */}
         <div className="mode-grid">
@@ -104,7 +105,7 @@ export default function Home({ onJoin, onSolo }) {
           >
             <div className="mode-icon"><IconChat /></div>
             <span className="mode-name">Setter / Guesser</span>
-            <span className="mode-desc">Ένας δίνει τη λέξη, ο άλλος μαντεύει</span>
+            <span className="mode-desc">Ένας δίνει τη λέξη, οι άλλοι μαντεύουν</span>
           </button>
           <button
             className={`mode-card${mode === 'race' ? ' active' : ''}`}
@@ -161,6 +162,8 @@ export default function Home({ onJoin, onSolo }) {
         )}
 
         {error && <p className="error-msg">{error}</p>}
+
+        <SkinPicker activeSkinId={skinId} onChange={onSkinChange} />
       </div>
     </div>
   )

@@ -12,8 +12,11 @@ export default function SetWord({ room, session, onHome }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const guesserName = Object.values(room?.players || {})
-    .find(p => p.role === 'guesser')?.name || 'ο αντίπαλος'
+  const guessers = Object.values(room?.players || {}).filter(p => p.role === 'guesser')
+  const guesserName =
+    guessers.length === 1 ? `Ο ${guessers[0].name}`
+    : guessers.length > 1 ? `Οι ${guessers.length} παίκτες`
+    : 'Οι παίκτες'
 
   async function handleSubmit() {
     const w = filterGreek(word.trim())
@@ -31,7 +34,7 @@ export default function SetWord({ room, session, onHome }) {
     <div className="app t-mint">
       <div className="set-word-content">
         <div className="set-word-top">
-          <p className="set-word-sub">Ο {guesserName} θα μαντέψει</p>
+          <p className="set-word-sub">{guesserName} θα μαντέψ{guessers.length === 1 ? 'ει' : 'ουν'}</p>
           <h2 className="set-word-title">Δώσε μια λέξη</h2>
         </div>
 
