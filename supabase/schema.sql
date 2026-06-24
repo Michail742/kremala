@@ -65,6 +65,46 @@ alter table public.rooms   replica identity full;
 alter table public.players replica identity full;
 alter table public.states  replica identity full;
 
+-- ── Ατομικό guess (κοινό board) ──────────────────────────────────────────────
+-- Κάνει merge ΕΝΟΣ γράμματος στο shared state με κλείδωμα γραμμής, ώστε ταυτόχρονες
+-- κινήσεις πολλών guessers να μη σβήνουν η μία την άλλη (το παλιό client-side overwrite
+-- όλου του guessed object είχε race). Υπολογίζει lives/status/log server-side.
+create or replace function public.kremala_guess(p_code text, p_pid text, p_letter text)
+returns void language plpgsql as $$
+declare
+  v_word text; v_guessed jsonb; v_log jsonb;
+  v_hit boolean; v_wrong int; v_lives int; v_allfound boolean; v_status text;
+begin
+  select word into v_word from public.rooms where code = p_code;
+  if v_word is null then return; end if;
+
+  select guessed, log into v_guessed, v_log
+    from public.states where code = p_code and pid = 'shared' for update;
+  if v_guessed is null then return; end if;
+  if v_guessed ? p_letter then return; end if;  -- ήδη παίχτηκε
+
+  v_hit := position(p_letter in v_word) > 0;
+  v_guessed := v_guessed || jsonb_build_object(p_letter, p_pid);
+  v_log := coalesce(v_log, '[]'::jsonb) || jsonb_build_object('pid', p_pid, 'letter', p_letter, 'hit', v_hit);
+
+  select count(*) into v_wrong from jsonb_object_keys(v_guessed) k where position(k in v_word) = 0;
+  v_lives := 6 - v_wrong;
+
+  select bool_and(v_guessed ? c) into v_allfound
+    from regexp_split_to_table(v_word, '') as c where c <> '';
+
+  v_status := case when v_allfound then 'won' when v_lives <= 0 then 'lost' else 'playing' end;
+
+  update public.states set guessed = v_guessed, log = v_log, lives = v_lives, status = v_status
+    where code = p_code and pid = 'shared';
+
+  if v_status <> 'playing' then
+    update public.rooms set status = 'finished' where code = p_code;
+  end if;
+end; $$;
+
+grant execute on function public.kremala_guess(text, text, text) to anon, authenticated;
+
 
 -- ╔══════════════════════════════════════════════════════════════════════════╗
 -- ║  PLATFORM — Κοινή βάση για ΟΛΑ τα παιχνίδια του GameHub                    ║

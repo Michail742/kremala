@@ -134,22 +134,11 @@ export async function setWord(code, word) {
   await supabase.from('rooms').update({ word, status: 'playing' }).eq('code', code)
 }
 
-// Setter/Guesser — κοινό board. Αποθηκεύει ΠΟΙΟΣ έπαιξε κάθε γράμμα (myId) + ιστορικό.
-export async function guessLetter(code, myId, letter, word, guessed, lives, log) {
-  const newGuessed = { ...guessed, [letter]: myId }
-  const hit = word.includes(letter)
-  const newLives = hit ? lives : lives - 1
-  const allFound = [...new Set(word)].every(l => newGuessed[l])
-  const status = allFound ? 'won' : newLives <= 0 ? 'lost' : 'playing'
-  const newLog = [...(log || []), { pid: myId, letter, hit }]
-
-  await supabase.from('states')
-    .update({ guessed: newGuessed, lives: newLives, status, log: newLog })
-    .eq('code', code).eq('pid', SHARED)
-
-  if (status !== 'playing') {
-    await supabase.from('rooms').update({ status: 'finished' }).eq('code', code)
-  }
+// Setter/Guesser — κοινό board. Ατομικό merge στον server (RPC) ώστε ταυτόχρονες
+// κινήσεις πολλών παικτών να μη σβήνουν η μία την άλλη. Καταγράφει ΠΟΙΟΣ έπαιξε κάθε
+// γράμμα + ιστορικό + lives/status, όλα μέσα σε ένα κλειδωμένο update.
+export async function guessLetter(code, myId, letter) {
+  await supabase.rpc('kremala_guess', { p_code: code, p_pid: myId, p_letter: letter })
 }
 
 // Race — ο κάθε παίκτης γράφει μόνο τη δική του γραμμή

@@ -37,7 +37,7 @@ export default function Game({ room, session, onHome }) {
   async function handleGuess(letter) {
     if (isFinished || gameStatus !== 'playing') return
     setLastGuessed(letter)
-    await guessLetter(session.roomCode, session.myId, letter, word, guessed, lives, log)
+    await guessLetter(session.roomCode, session.myId, letter)
   }
 
   async function handleReset() {
