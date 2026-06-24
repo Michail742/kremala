@@ -78,6 +78,7 @@ export default function Home({ onJoin, onSolo, skinId, onSkinChange }) {
             </svg>
           </div>
           <h1 className="home-title">ΚΡΕΜΑΛΑ</h1>
+          <p className="home-sub">Παίξτε έως 8 άτομα μαζί</p>
         </div>
 
         {/* Solo quick-play */}
