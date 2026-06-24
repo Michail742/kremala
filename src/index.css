@@ -303,6 +303,13 @@ svg { display: block; }
   padding: 4px 8px 4px 10px; border-radius: 999px;
   border: 1px solid var(--hair); background: var(--surface);
   font-size: 12px; font-weight: 700; line-height: 1;
+  animation: guessToast 2s ease forwards;
+}
+@keyframes guessToast {
+  0%   { opacity: 0; transform: translateY(6px) scale(.96); }
+  12%  { opacity: 1; transform: translateY(0) scale(1); }
+  78%  { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-4px) scale(.98); }
 }
 .guess-feed-name { color: var(--ink); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .guess-feed-letter {
