@@ -6,6 +6,7 @@ const CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
 export const MAX_PLAYERS = 8
 export const WIN_BONUS = 3 // πόντοι bonus για νίκη γύρου (ίδιο με το server)
 const SHARED = 'shared' // pid για το κοινό board στο setter-guesser
+const CLAIM = '__claim' // pid γραμμής που κρατά το «Το βρήκα» state (claimer + αποκλεισμένοι)
 
 export function getPlayerId() {
   let id = localStorage.getItem('kremala-pid')
@@ -39,7 +40,12 @@ function composeRoom(roomRow, playerRows, stateRows) {
   }
   const raceStates = {}
   let gameState = null
+  let claim = { claimer: null, failed: {} } // «Το βρήκα»: ποιος δηλώνει τώρα + ποιοι απέτυχαν (αποκλεισμένοι τον γύρο)
   for (const s of stateRows || []) {
+    if (s.pid === CLAIM) {
+      claim = { claimer: s.guessed?.claimer ?? null, failed: s.guessed?.failed || {} }
+      continue
+    }
     const st = { guessed: s.guessed || {}, livesRemaining: s.lives, status: s.status, log: s.log || [] }
     if (s.pid === SHARED) gameState = st
     else raceStates[s.pid] = st
@@ -57,6 +63,7 @@ function composeRoom(roomRow, playerRows, stateRows) {
     ready,
     gameState,
     raceStates,
+    claim,
   }
 }
 
@@ -131,10 +138,56 @@ export async function startGame(code, mode, playerIds) {
 }
 
 export async function setWord(code, word) {
-  await supabase.from('states').upsert({
-    code, pid: SHARED, guessed: {}, lives: 6, status: 'playing', log: [],
-  })
+  // Φτιάξε ΚΑΙ το κοινό board ΚΑΙ τη γραμμή claim (μηδενισμένη) για τον νέο γύρο.
+  await supabase.from('states').upsert([
+    { code, pid: SHARED, guessed: {}, lives: 6, status: 'playing', log: [] },
+    { code, pid: CLAIM, guessed: { claimer: null, failed: {} }, lives: 6, status: 'claim', log: [] },
+  ])
   await supabase.from('rooms').update({ word, status: 'playing' }).eq('code', code)
+}
+
+// ── «Το βρήκα» (claim) — Setter/Guesser ──────────────────────────────────────
+// Ατομική κατοχύρωση: ο ΠΡΩΤΟΣ που πατάει κερδίζει. Το conditional update (claimer
+// is null) κλειδώνει τη γραμμή server-side, ώστε ταυτόχρονα πατήματα να μη συγκρούονται.
+export async function startClaim(code, myId, failed) {
+  const { data, error } = await supabase.from('states')
+    .update({ guessed: { claimer: myId, failed: failed || {} } })
+    .eq('code', code).eq('pid', CLAIM)
+    .is('guessed->>claimer', null)
+    .select()
+  return !error && Array.isArray(data) && data.length > 0 // true αν κατοχύρωσα εγώ
+}
+
+// Αποτυχία: ο claimer μπαίνει στους αποκλεισμένους του γύρου & ελευθερώνεται το board.
+export async function failClaim(code, myId, failed) {
+  const nf = { ...(failed || {}), [myId]: true }
+  await supabase.from('states')
+    .update({ guessed: { claimer: null, failed: nf } })
+    .eq('code', code).eq('pid', CLAIM)
+}
+
+// Νίκη με claim: αποκάλυψε τα γράμματα που έλειπαν (γράφονται στο log ως κινήσεις του
+// claimer ώστε board/feed/breakdown/score να μείνουν συνεπή), κλείσε τον γύρο, δώσε
+// πόντους (+1 ανά γράμμα που αποκάλυψε + WIN_BONUS).
+export async function winByClaim(code, myId, word, guessed, log) {
+  const letters = [...new Set(word)].filter(Boolean)
+  const newGuessed = { ...(guessed || {}) }
+  const now = Date.now()
+  const added = []
+  for (const l of letters) {
+    if (!newGuessed[l]) { newGuessed[l] = myId; added.push({ pid: myId, letter: l, hit: true, t: now }) }
+  }
+  const newLog = [...(log || []), ...added]
+  await supabase.from('states')
+    .update({ guessed: newGuessed, status: 'won', log: newLog })
+    .eq('code', code).eq('pid', SHARED)
+  await supabase.from('states')
+    .update({ guessed: { claimer: null, failed: {} } })
+    .eq('code', code).eq('pid', CLAIM)
+  await supabase.from('rooms')
+    .update({ status: 'finished', winner: myId })
+    .eq('code', code)
+  await addScore(code, myId, added.length + WIN_BONUS)
 }
 
 // Setter/Guesser — κοινό board. Ατομικό merge στον server (RPC) ώστε ταυτόχρονες

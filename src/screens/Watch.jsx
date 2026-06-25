@@ -32,6 +32,8 @@ export default function Watch({ room, session, onHome }) {
   const log = gameState.log || []
   const guesserCount = Object.keys(players).filter(pid => pid !== room?.setterPid).length
   const guesserName = guesserCount === 1 ? 'Ο παίκτης' : 'Οι παίκτες'
+  const claimer = room?.claim?.claimer
+  const claimerName = claimer ? (players[claimer]?.name || 'Κάποιος') : ''
 
   async function handleReset() {
     await resetRoom(session.roomCode, room.mode)
@@ -57,6 +59,12 @@ export default function Watch({ room, session, onHome }) {
           {guesserName} {guesserCount === 1 ? 'μαντεύει' : 'μαντεύουν'}…
         </div>
       </div>
+
+      {!isFinished && claimer && (
+        <div className="claim-zone">
+          <div className="claim-banner">🔒 {claimerName} δηλώνει ότι βρήκε τη λέξη…</div>
+        </div>
+      )}
 
       {/* Setter always sees the full word */}
       <WordDisplay word={word} guessed={guessed} revealed={true} />

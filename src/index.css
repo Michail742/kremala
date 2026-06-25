@@ -370,6 +370,28 @@ svg { display: block; }
 .breakdown-total { font-weight: 900; color: var(--accent-strong); }
 .breakdown-parts { font-size: 12px; color: var(--muted); margin-top: 1px; }
 
+/* «Το βρήκα» (claim) ζώνη */
+.claim-zone { width: 100%; max-width: 360px; margin: 12px auto 0; }
+.claim-btn {
+  width: 100%; background: var(--accent-strong); color: #fff;
+  font-weight: 900; letter-spacing: .02em;
+}
+.claim-banner {
+  text-align: center; font-size: 14px; font-weight: 800; color: var(--ink);
+  background: var(--surface); border: 1px solid var(--hair);
+  border-radius: 14px; padding: 12px 14px;
+}
+.claim-banner.muted { color: var(--muted); font-weight: 700; }
+.claim-box {
+  background: var(--surface); border: 1px solid var(--accent-strong);
+  border-radius: 16px; padding: 12px 14px;
+}
+.claim-title { font-size: 13px; font-weight: 800; color: var(--ink); margin: 0 0 8px; text-align: center; }
+.claim-row { display: flex; gap: 8px; }
+.claim-input { flex: 1; text-transform: uppercase; letter-spacing: .08em; }
+.claim-submit { padding-left: 18px; padding-right: 18px; }
+.claim-hint { font-size: 11px; color: var(--muted); margin: 8px 0 0; text-align: center; }
+
 /* ============================================================
    MODALS
    ============================================================ */

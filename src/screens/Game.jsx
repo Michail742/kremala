@@ -6,8 +6,11 @@ import LivesPips from '../components/LivesPips'
 import GuessFeed from '../components/GuessFeed'
 import Scoreboard from '../components/Scoreboard'
 import RoundBreakdown from '../components/RoundBreakdown'
-import { guessLetter, resetRoom } from '../hooks/useRoom'
+import { guessLetter, resetRoom, startClaim, failClaim, winByClaim } from '../hooks/useRoom'
 import { setterRoundRows } from '../roundPoints'
+
+const GREEK_UPPER = 'ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ'
+const filterGreekUpper = s => s.toUpperCase().split('').filter(c => GREEK_UPPER.includes(c)).join('')
 
 function BrandSvg() {
   return (
@@ -21,6 +24,7 @@ function BrandSvg() {
 
 export default function Game({ room, session, onHome }) {
   const [lastGuessed, setLastGuessed] = useState(null)
+  const [claimInput, setClaimInput] = useState('')
 
   const word = room?.word || ''
   const gameState = room?.gameState || {}
@@ -34,15 +38,38 @@ export default function Game({ room, session, onHome }) {
   const players = room?.players || {}
   const setterName = players[room?.setterPid]?.name || 'Setter'
   const log = gameState.log || []
+  const myId = session?.myId
+
+  // «Το βρήκα» (claim) state
+  const claim = room?.claim || { claimer: null, failed: {} }
+  const someoneClaiming = !!claim.claimer
+  const iAmClaiming = claim.claimer === myId
+  const iAmExcluded = !!claim.failed?.[myId]
+  const unrevealed = [...new Set(word)].filter(l => l && !guessed[l]).length // διακριτά γράμματα που δεν βρέθηκαν
+  const claimerName = claim.claimer ? (players[claim.claimer]?.name || 'Κάποιος') : ''
 
   async function handleGuess(letter) {
     if (isFinished || gameStatus !== 'playing') return
+    if (someoneClaiming || iAmExcluded) return // κλειδωμένο όσο κάποιος δηλώνει «Το βρήκα» / αν έχω αποκλειστεί
     setLastGuessed(letter)
     await guessLetter(session.roomCode, session.myId, letter)
   }
 
+  async function handleClaim() {
+    await startClaim(session.roomCode, myId, claim.failed)
+  }
+
+  async function submitClaim() {
+    const guess = filterGreekUpper(claimInput)
+    if (!guess) return
+    setClaimInput('')
+    if (guess === word) await winByClaim(session.roomCode, myId, word, guessed, log)
+    else await failClaim(session.roomCode, myId, claim.failed)
+  }
+
   async function handleReset() {
     setLastGuessed(null)
+    setClaimInput('')
     await resetRoom(session.roomCode, room.mode)
   }
 
@@ -66,7 +93,35 @@ export default function Game({ room, session, onHome }) {
 
       <WordDisplay word={word} guessed={guessed} revealed={gameStatus === 'lost'} lastGuessed={lastGuessed} />
 
-      <Keyboard word={word} guessed={guessed} onGuess={handleGuess} disabled={isFinished} />
+      {!isFinished && gameStatus === 'playing' && (
+        <div className="claim-zone">
+          {iAmClaiming ? (
+            <div className="claim-box">
+              <p className="claim-title">Γράψε ολόκληρη τη λέξη:</p>
+              <div className="claim-row">
+                <input
+                  className="field-input claim-input"
+                  value={claimInput}
+                  onChange={e => setClaimInput(filterGreekUpper(e.target.value))}
+                  onKeyDown={e => { if (e.key === 'Enter') submitClaim() }}
+                  placeholder="Η ΛΕΞΗ"
+                  autoComplete="off" autoCorrect="off" spellCheck={false} autoFocus
+                />
+                <button className="btn claim-submit" onClick={submitClaim} disabled={!claimInput}>OK</button>
+              </div>
+              <p className="claim-hint">Αν λάθος, χάνεις τη σειρά σου γι' αυτόν τον γύρο.</p>
+            </div>
+          ) : someoneClaiming ? (
+            <div className="claim-banner">🔒 {claimerName} δηλώνει ότι βρήκε τη λέξη… περίμενε</div>
+          ) : iAmExcluded ? (
+            <div className="claim-banner muted">Δεν βρήκες τη λέξη — βλέπεις μέχρι το τέλος του γύρου</div>
+          ) : unrevealed >= 3 ? (
+            <button className="btn claim-btn" onClick={handleClaim}>✋ Το βρήκα!</button>
+          ) : null}
+        </div>
+      )}
+
+      <Keyboard word={word} guessed={guessed} onGuess={handleGuess} disabled={isFinished || someoneClaiming || iAmExcluded} />
 
       <GuessFeed log={log} players={players} />
 
