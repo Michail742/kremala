@@ -4,7 +4,9 @@ import Keyboard from '../components/Keyboard'
 import WordDisplay from '../components/WordDisplay'
 import LivesPips from '../components/LivesPips'
 import Scoreboard from '../components/Scoreboard'
+import RoundBreakdown from '../components/RoundBreakdown'
 import { guessLetterRace, resetRoom } from '../hooks/useRoom'
+import { raceRoundRows } from '../roundPoints'
 
 function BrandSvg() {
   return (
@@ -122,6 +124,7 @@ export default function Race({ room, session, onHome }) {
               <span className="lab">Η λέξη</span>
               {[...word].map((l, i) => <span key={i}>{l}</span>)}
             </div>
+            <RoundBreakdown rows={raceRoundRows(raceStates, word, players, winner, myId)} />
             <Scoreboard players={players} scores={room?.scores} myId={myId} />
             <button className="btn" style={{ marginTop: '18px' }} onClick={handleReset}>Ξανά!</button>
             <button className="btn ghost" onClick={onHome}>Έξοδος</button>

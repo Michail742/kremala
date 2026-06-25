@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { getPlayerId, useRoomSubscription } from './hooks/useRoom'
+import { useEffect, useRef, useState } from 'react'
+import { getPlayerId, useRoomSubscription, addScore } from './hooks/useRoom'
 import { loadSkin, applySkin, saveSkin, SKINS } from './skins'
 import Home from './screens/Home'
 import Solo from './screens/Solo'
@@ -41,6 +41,20 @@ export default function App() {
     setSkinId(id)
   }
   const { room, loaded } = useRoomSubscription(session?.roomCode)
+
+  // Setter scoring (Setter/Guesser): όταν τελειώνει ο γύρος, ο setter παίρνει +1 ανά
+  // λάθος γράμμα των guessers (ανταμοιβή για δύσκολη λέξη). Το γράφει ΜΟΝΟ ο host
+  // (σταθερά παρών, ένας writer ώστε να μην πολλαπλασιαστεί)· ατομικό increment μέσω
+  // RPC. Idempotent ανά γύρο μέσω του awardedRef (μηδενίζει στον επόμενο γύρο).
+  const awardedRef = useRef(false)
+  useEffect(() => {
+    if (room?.status !== 'finished') { awardedRef.current = false; return }
+    if (room?.mode !== 'setter-guesser' || awardedRef.current) return
+    if (room?.players?.[session?.myId]?.role !== 'host') return
+    awardedRef.current = true
+    const wrong = (room?.gameState?.log || []).filter(e => !e.hit).length
+    if (room?.setterPid && wrong > 0) addScore(room.code, room.setterPid, wrong)
+  }, [room?.status, room?.mode, room?.code, session?.myId])
 
   if (solo) return <Solo onHome={() => setSolo(false)} />
 

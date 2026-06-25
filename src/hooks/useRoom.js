@@ -144,6 +144,13 @@ export async function guessLetter(code, myId, letter) {
   await supabase.rpc('kremala_guess', { p_code: code, p_pid: myId, p_letter: letter })
 }
 
+// Ατομικό increment βαθμολογίας ενός παίκτη (RPC). Χρησιμοποιείται για το setter
+// bonus στο Setter/Guesser (γράφεται από τον host) και για το race-mode scoring.
+export async function addScore(code, pid, points) {
+  if (!pid || !points) return
+  await supabase.rpc('kremala_add_score', { p_code: code, p_pid: pid, p_points: points })
+}
+
 // Race — ο κάθε παίκτης γράφει μόνο τη δική του γραμμή
 export async function guessLetterRace(code, myId, letter, word, guessed, lives, raceStates) {
   const newGuessed = { ...guessed, [letter]: true }
