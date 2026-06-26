@@ -4,10 +4,7 @@ import Keyboard from '../components/Keyboard'
 import WordDisplay from '../components/WordDisplay'
 import LivesPips from '../components/LivesPips'
 import GuessFeed from '../components/GuessFeed'
-import Scoreboard from '../components/Scoreboard'
-import RoundBreakdown from '../components/RoundBreakdown'
 import { guessLetter, resetRoom, startClaim, failClaim, winByClaim } from '../hooks/useRoom'
-import { setterRoundRows } from '../roundPoints'
 
 const GREEK_UPPER = 'ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ'
 const filterGreekUpper = s => s.toUpperCase().split('').filter(c => GREEK_UPPER.includes(c)).join('')
@@ -140,8 +137,6 @@ export default function Game({ room, session, onHome }) {
               <span className="lab">Η λέξη</span>
               {[...word].map((l, i) => <span key={i}>{l}</span>)}
             </div>
-            <RoundBreakdown rows={setterRoundRows(log, players, room?.setterPid, gameStatus, session?.myId)} />
-            <Scoreboard players={players} scores={room?.scores} myId={session?.myId} />
             <button className="btn" style={{ marginTop: '18px' }} onClick={handleReset}>Νέο παιχνίδι</button>
             <button className="btn ghost" onClick={onHome}>Έξοδος</button>
           </div>

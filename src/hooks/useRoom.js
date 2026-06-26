@@ -187,7 +187,6 @@ export async function winByClaim(code, myId, word, guessed, log) {
   await supabase.from('rooms')
     .update({ status: 'finished', winner: myId })
     .eq('code', code)
-  await addScore(code, myId, added.length + WIN_BONUS)
 }
 
 // Setter/Guesser — κοινό board. Ατομικό merge στον server (RPC) ώστε ταυτόχρονες
@@ -195,13 +194,6 @@ export async function winByClaim(code, myId, word, guessed, log) {
 // γράμμα + ιστορικό + lives/status, όλα μέσα σε ένα κλειδωμένο update.
 export async function guessLetter(code, myId, letter) {
   await supabase.rpc('kremala_guess', { p_code: code, p_pid: myId, p_letter: letter })
-}
-
-// Ατομικό increment βαθμολογίας ενός παίκτη (RPC). Χρησιμοποιείται για το setter
-// bonus στο Setter/Guesser (γράφεται από τον host) και για το race-mode scoring.
-export async function addScore(code, pid, points) {
-  if (!pid || !points) return
-  await supabase.rpc('kremala_add_score', { p_code: code, p_pid: pid, p_points: points })
 }
 
 // Race — ο κάθε παίκτης γράφει μόνο τη δική του γραμμή
@@ -216,11 +208,7 @@ export async function guessLetterRace(code, myId, letter, word, guessed, lives, 
     .update({ guessed: newGuessed, lives: newLives, status: myStatus })
     .eq('code', code).eq('pid', myId)
 
-  // Πόντοι (ατομικό increment στον server): +1 σωστό γράμμα, +bonus για νίκη.
-  if (hit) await supabase.rpc('kremala_add_score', { p_code: code, p_pid: myId, p_points: 1 })
-
   if (myStatus === 'won') {
-    await supabase.rpc('kremala_add_score', { p_code: code, p_pid: myId, p_points: WIN_BONUS })
     await supabase.from('rooms').update({ status: 'finished', winner: myId }).eq('code', code)
   } else if (myStatus === 'lost') {
     // Τελειώνει μόνο αν δεν έμεινε κανείς άλλος να παίζει

@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react'
 import { markReady, startGame } from '../hooks/useRoom'
-import Scoreboard from '../components/Scoreboard'
 
 export default function Lobby({ room, session, onHome }) {
   const startedRef = useRef(false)
@@ -63,8 +62,6 @@ export default function Lobby({ room, session, onHome }) {
         </div>
 
         {statusMsg && <p className="lobby-status">{statusMsg}</p>}
-
-        <Scoreboard players={players} scores={room?.scores} myId={myId} />
 
         {isReadyCheck && !amIReady && (
           <button className="btn" onClick={handleReady}>Έτοιμος!</button>
