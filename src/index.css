@@ -294,9 +294,14 @@ svg { display: block; }
    GUESS FEED (κοινό board — ποιος έπαιξε ποιο γράμμα)
    ============================================================ */
 .guess-feed {
+  /* Πάνω-κέντρο, εκτός ροής ώστε να ΜΗΝ σπρώχνει το πληκτρολόγιο όταν εμφανίζεται/φεύγει */
+  position: absolute;
+  top: 56px; left: 50%; transform: translateX(-50%);
+  z-index: 4; pointer-events: none;
   display: flex; flex-wrap: wrap; gap: 6px;
   justify-content: center; align-content: flex-start;
-  padding: 10px 12px 0; max-height: 96px; overflow: hidden;
+  width: max-content; max-width: 88%;
+  max-height: 96px; overflow: hidden;
 }
 .guess-feed-item {
   display: inline-flex; align-items: center; gap: 6px;
