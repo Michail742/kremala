@@ -82,6 +82,14 @@ svg { display: block; }
 }
 .brand-name { font-size: 16px; font-weight: 900; letter-spacing: .02em; color: var(--ink); }
 .nav-right { display: flex; align-items: center; gap: 8px; }
+.nav-exit {
+  font-size: 12px; font-weight: 800; color: var(--muted);
+  background: var(--surface); border: 1px solid var(--hair);
+  border-radius: 10px; padding: 5px 11px; cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.nav-exit:active { transform: translateY(1px); }
+.nav-exit:hover { border-color: var(--accent); color: var(--ink); }
 .score {
   display: flex; align-items: center; gap: 4px;
   background: var(--surface); border: 1px solid var(--hair);
@@ -279,6 +287,8 @@ svg { display: block; }
   color: var(--accent-strong);
   border-color: var(--accent);
 }
+.key:disabled { pointer-events: none; cursor: default; }
+.keyboard.is-locked .key:not(.is-correct):not(.is-wrong) { opacity: .45; }
 .key.is-correct {
   background: var(--good-soft); color: var(--good-ink);
   border-color: var(--good-bd);
@@ -392,9 +402,9 @@ svg { display: block; }
   border-radius: 16px; padding: 12px 14px;
 }
 .claim-title { font-size: 13px; font-weight: 800; color: var(--ink); margin: 0 0 8px; text-align: center; }
-.claim-row { display: flex; gap: 8px; }
-.claim-input { flex: 1; text-transform: uppercase; letter-spacing: .08em; }
-.claim-submit { padding-left: 18px; padding-right: 18px; }
+.claim-row { display: flex; gap: 8px; align-items: stretch; }
+.claim-input { flex: 1 1 auto; min-width: 0; text-transform: uppercase; letter-spacing: .08em; }
+.claim-submit { flex: 0 0 auto; width: auto; padding-left: 22px; padding-right: 22px; }
 .claim-hint { font-size: 11px; color: var(--muted); margin: 8px 0 0; text-align: center; }
 
 /* ============================================================

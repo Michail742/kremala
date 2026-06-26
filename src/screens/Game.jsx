@@ -77,7 +77,10 @@ export default function Game({ room, session, onHome }) {
           <span className="brand-mark"><BrandSvg /></span>
           <span className="brand-name">ΚΡΕΜΑΛΑ</span>
         </div>
-        <span className="player-badge">vs {setterName}</span>
+        <div className="nav-right">
+          <span className="player-badge">vs {setterName}</span>
+          <button className="nav-exit" onClick={onHome}>Έξοδος</button>
+        </div>
       </nav>
 
       <div className="stage">
