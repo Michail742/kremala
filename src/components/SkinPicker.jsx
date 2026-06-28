@@ -10,7 +10,6 @@ export default function SkinPicker({ activeSkinId, onChange }) {
 
   return (
     <div className="skin-picker">
-      <p className="skin-picker-label">Εμφάνιση ανθρωπάκι</p>
       <div className="skin-picker-grid">
         {SKINS.map(skin => (
           <button
