@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { getPlayerId, useRoomSubscription } from './hooks/useRoom'
 import { loadSkin, applySkin, saveSkin, SKINS } from './skins'
 import Home from './screens/Home'
@@ -26,8 +26,26 @@ function deriveScreen(room, myId) {
   return 'home'
 }
 
+// Πόσο «φρέσκο» πρέπει να είναι ένα session για να ξαναμπείς αυτόματα μετά από
+// reload. Όσο παίζεις κρατάμε ένα heartbeat που ανανεώνει το ts· αν κλείσεις ή
+// παρατήσεις τη συσκευή, το ts «παγώνει» και μετά από λίγο το session θεωρείται
+// εγκαταλελειμμένο → ξεκινάς από την Αρχή αντί να κολλάς στην παλιά οθόνη.
+// Έτσι ένα γρήγορο reload (π.χ. κλείδωμα οθόνης στο κινητό) σε επαναφέρει, αλλά
+// μια εγκαταλελειμμένη συσκευή όχι.
+const SESSION_TTL_MS = 45_000
+const SESSION_BEAT_MS = 15_000
+
 function loadSession() {
-  try { return JSON.parse(localStorage.getItem('kremala-session')) } catch { return null }
+  try {
+    const s = JSON.parse(localStorage.getItem('kremala-session'))
+    if (s && s.ts && Date.now() - s.ts < SESSION_TTL_MS) return s
+  } catch { /* corrupt → πέσε στο καθάρισμα */ }
+  localStorage.removeItem('kremala-session')
+  return null
+}
+
+function saveSession(sess) {
+  localStorage.setItem('kremala-session', JSON.stringify({ ...sess, ts: Date.now() }))
 }
 
 export default function App() {
@@ -46,7 +64,7 @@ export default function App() {
 
   function handleJoin(sess) {
     setSession(sess)
-    localStorage.setItem('kremala-session', JSON.stringify(sess))
+    saveSession(sess)
   }
 
   function handleHome() {
@@ -54,16 +72,15 @@ export default function App() {
     localStorage.removeItem('kremala-session')
   }
 
-  // Όταν ανοίγεις ξανά τη συσκευή, μην κολλάς σε παλιό παιχνίδι που παράτησες:
-  // αν το αποθηκευμένο session δείχνει δωμάτιο που έχει τελειώσει ή δεν υπάρχει
-  // πια, καθάρισέ το και γύρνα στην Αρχή. Τρέχει ΜΟΝΟ στο αρχικό restore (ref
-  // guard), ώστε ένα live finish μέσα στο παιχνίδι να εμφανίζει κανονικά το modal.
-  const initialRestoreHandled = useRef(false)
+  // Heartbeat: όσο είσαι σε δωμάτιο ανανέωνε το ts του session, ώστε ένα γρήγορο
+  // reload να σε επαναφέρει αλλά μια εγκαταλελειμμένη συσκευή (που σταματά να
+  // χτυπά) να ξεκινά από την Αρχή την επόμενη φορά (βλ. loadSession/SESSION_TTL).
   useEffect(() => {
-    if (!loaded || initialRestoreHandled.current) return
-    initialRestoreHandled.current = true
-    if (session && (!room || room.status === 'finished')) handleHome()
-  }, [loaded, room, session])
+    if (!session) return
+    saveSession(session)
+    const id = setInterval(() => saveSession(session), SESSION_BEAT_MS)
+    return () => clearInterval(id)
+  }, [session])
 
   if (session && !loaded) {
     return (
