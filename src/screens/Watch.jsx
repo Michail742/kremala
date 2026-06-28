@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from 'react'
 import Character from '../components/Character'
 import Keyboard from '../components/Keyboard'
 import WordDisplay from '../components/WordDisplay'
@@ -27,6 +28,20 @@ export default function Watch({ room, session, onHome }) {
 
   const players = room?.players || {}
   const log = gameState.log || []
+
+  // Ο setter παρακολουθεί τη λέξη να συμπληρώνεται σταδιακά όσο οι guessers
+  // βρίσκουν γράμματα. Κρατάμε το τελευταίο πετυχημένο γράμμα από το log ώστε
+  // να παίξει το reveal animation στο νέο γράμμα (ίδια αίσθηση με τον guesser).
+  const [lastGuessed, setLastGuessed] = useState(null)
+  const prevLogLen = useRef(log.length)
+  useEffect(() => {
+    if (log.length > prevLogLen.current) {
+      const newest = log[log.length - 1]
+      if (newest?.hit) setLastGuessed(newest.letter)
+    }
+    prevLogLen.current = log.length
+  }, [log])
+
   const guesserCount = Object.keys(players).filter(pid => pid !== room?.setterPid).length
   const guesserName = guesserCount === 1 ? 'Ο παίκτης' : 'Οι παίκτες'
   const claimer = room?.claim?.claimer
@@ -63,8 +78,9 @@ export default function Watch({ room, session, onHome }) {
         </div>
       )}
 
-      {/* Setter always sees the full word */}
-      <WordDisplay word={word} guessed={guessed} revealed={true} />
+      {/* Ο setter βλέπει τη λέξη να συμπληρώνεται σταδιακά (μόνο τα γράμματα που
+          έχουν βρεθεί), εκτός αν τελείωσε ο γύρος που αποκαλύπτεται όλη. */}
+      <WordDisplay word={word} guessed={guessed} revealed={isFinished} lastGuessed={lastGuessed} />
 
       {/* Read-only keyboard showing guesser's guesses */}
       <Keyboard word={word} guessed={guessed} onGuess={() => {}} disabled={true} />

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { getPlayerId, useRoomSubscription } from './hooks/useRoom'
 import { loadSkin, applySkin, saveSkin, SKINS } from './skins'
 import Home from './screens/Home'
@@ -53,6 +53,17 @@ export default function App() {
     setSession(null)
     localStorage.removeItem('kremala-session')
   }
+
+  // Όταν ανοίγεις ξανά τη συσκευή, μην κολλάς σε παλιό παιχνίδι που παράτησες:
+  // αν το αποθηκευμένο session δείχνει δωμάτιο που έχει τελειώσει ή δεν υπάρχει
+  // πια, καθάρισέ το και γύρνα στην Αρχή. Τρέχει ΜΟΝΟ στο αρχικό restore (ref
+  // guard), ώστε ένα live finish μέσα στο παιχνίδι να εμφανίζει κανονικά το modal.
+  const initialRestoreHandled = useRef(false)
+  useEffect(() => {
+    if (!loaded || initialRestoreHandled.current) return
+    initialRestoreHandled.current = true
+    if (session && (!room || room.status === 'finished')) handleHome()
+  }, [loaded, room, session])
 
   if (session && !loaded) {
     return (
