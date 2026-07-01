@@ -68,6 +68,8 @@ export default function Home({ onJoin, onSolo, skinId, onSkinChange }) {
 
   return (
     <div className="app t-mint">
+      <a href="https://paixnidoparea.vercel.app/" aria-label="Επιστροφή στο hub"
+        style={{ position: 'absolute', top: 'max(10px, env(safe-area-inset-top))', left: 'max(10px, env(safe-area-inset-left))', zIndex: 50, display: 'flex', alignItems: 'center', gap: 6, padding: '7px 12px', borderRadius: 999, background: 'rgba(15,23,20,.66)', color: '#fff', font: '700 13px/1 Nunito, system-ui, sans-serif', textDecoration: 'none', boxShadow: '0 2px 10px rgba(0,0,0,.28)', backdropFilter: 'blur(5px)', WebkitBackdropFilter: 'blur(5px)' }}>← Hub</a>
       <div className="home-content">
         <div className="home-brand">
           <div className="brand-mark lg">

@@ -100,6 +100,7 @@ export default function Solo({ onHome }) {
               <path d="M20 4v4h-4"/>
             </svg>
           </button>
+          <button className="nav-exit" onClick={onHome}>Έξοδος</button>
         </div>
       </nav>
 

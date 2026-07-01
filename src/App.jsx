@@ -60,8 +60,6 @@ export default function App() {
   }
   const { room, loaded } = useRoomSubscription(session?.roomCode)
 
-  if (solo) return <Solo onHome={() => setSolo(false)} />
-
   function handleJoin(sess) {
     setSession(sess)
     saveSession(sess)
@@ -81,6 +79,12 @@ export default function App() {
     const id = setInterval(() => saveSession(session), SESSION_BEAT_MS)
     return () => clearInterval(id)
   }, [session])
+
+  // Σημαντικό: αυτό το early return πρέπει να έρχεται ΜΕΤΑ από όλα τα hooks
+  // παραπάνω, αλλιώς το React μετράει διαφορετικό αριθμό hooks ανάμεσα στο
+  // πρώτο render (solo=false) και το re-render μετά το setSolo(true) →
+  // "Rendered fewer hooks than expected" crash.
+  if (solo) return <Solo onHome={() => setSolo(false)} />
 
   if (session && !loaded) {
     return (
