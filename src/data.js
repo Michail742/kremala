@@ -21,10 +21,13 @@ export const WORDS = [
   'ΧΑΡΤΗΣ','ΚΛΕΙΔΙ','ΠΟΡΤΑ','ΠΑΡΑΘΥΡΟ','ΣΚΑΛΑ',
 ]
 
-export const LETTERS = [
-  'Α','Β','Γ','Δ','Ε','Ζ','Η','Θ','Ι','Κ','Λ','Μ',
-  'Ν','Ξ','Ο','Π','Ρ','Σ','Τ','Υ','Φ','Χ','Ψ','Ω',
+export const LETTER_ROWS = [
+  ['Ε','Ρ','Τ','Υ','Θ','Ι','Ο','Π'],
+  ['Α','Σ','Δ','Φ','Γ','Η','Ξ','Κ','Λ'],
+  ['Ζ','Χ','Ψ','Ω','Β','Ν','Μ'],
 ]
+
+export const LETTERS = LETTER_ROWS.flat()
 
 export function wordForRoom(room) {
   return WORDS[room.createdAt % WORDS.length]

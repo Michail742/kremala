@@ -253,15 +253,21 @@ svg { display: block; }
 
 /* ---------- KEYBOARD ---------- */
 .keyboard {
-  display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;
+  display: flex; flex-direction: column; gap: 8px;
   padding-top: 4px;
   flex-shrink: 0;
 }
+/* Οι μπάρες κρατούν ίσο πλάτος πλήκτρου σε όλες τις σειρές (10 πλήκτρα ανά πλάτος). */
+.krow { display: flex; gap: 6px; }
+.krow-1 { padding: 0 10%; }
+.krow-2 { padding: 0 5%; }
+.krow-3 { padding: 0 15%; }
 .key {
-  min-height: 50px; aspect-ratio: 1 / 1;
-  border-radius: 14px;
+  flex: 1 1 0; min-width: 0;
+  height: 46px;
+  border-radius: 10px;
   display: grid; place-items: center;
-  font-size: 21px; font-weight: 800;
+  font-size: 18px; font-weight: 800;
   color: var(--key-ink);
   background: var(--key-bg);
   border: 1px solid var(--key-bd);
@@ -279,6 +285,9 @@ svg { display: block; }
 }
 .key:disabled { pointer-events: none; cursor: default; }
 .keyboard.is-locked .key:not(.is-correct):not(.is-wrong) { opacity: .45; }
+@media (min-width: 480px) {
+  .key { height: 52px; font-size: 20px; border-radius: 12px; }
+}
 .key.is-correct {
   background: var(--good-soft); color: var(--good-ink);
   border-color: var(--good-bd);
