@@ -4,14 +4,14 @@ import Keyboard from '../components/Keyboard'
 import WordDisplay from '../components/WordDisplay'
 import LivesPips from '../components/LivesPips'
 import GuessFeed from '../components/GuessFeed'
+import TopBar from '../components/TopBar'
+import ResultSheet from '../components/ResultSheet'
 import { resetRoom } from '../hooks/useRoom'
 
-function BrandSvg() {
+function LockIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" aria-hidden="true">
-      <path d="M6 4h12v3a6 6 0 0 1-12 0V4Z"/>
-      <path d="M10 12h4v4h-4z"/>
-      <rect x="8" y="18" width="8" height="2.4" rx="1.2"/>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>
     </svg>
   )
 }
@@ -52,35 +52,31 @@ export default function Watch({ room, session, onHome }) {
   }
 
   return (
-    <div className="app t-mint">
-      <nav className="nav">
-        <div className="brand">
-          <span className="brand-mark"><BrandSvg /></span>
-          <span className="brand-name">ΚΡΕΜΑΛΑ</span>
-        </div>
-        <span className="watch-badge">Παρακολουθείς</span>
-      </nav>
+    <div className="pp-screen kr-noinset kr-view">
+      <TopBar onBack={onHome} back="close" backLabel="Έξοδος από το δωμάτιο" title="Κρεμάλα" sub="Παρακολουθείς" />
 
-      <div className="stage">
-        <LivesPips lives={lives} />
-        <div className="char-wrap">
-          <div className="char-platform" />
-          <Character wrongGuesses={wrongGuesses} />
+      <main className="pp-screen__body kr-play">
+        <div className="kr-stage">
+          <LivesPips lives={lives} />
+          <div className="kr-char">
+            <div className="kr-platform" />
+            <Character wrongGuesses={wrongGuesses} />
+          </div>
+          <p className="kr-cap" aria-live="polite">
+            {guesserName} {guesserCount === 1 ? 'μαντεύει' : 'μαντεύουν'} τη λέξη σου…
+          </p>
         </div>
-        <div className="stage-cap" aria-live="polite">
-          {guesserName} {guesserCount === 1 ? 'μαντεύει' : 'μαντεύουν'}…
-        </div>
-      </div>
 
-      {!isFinished && claimer && (
-        <div className="claim-zone">
-          <div className="claim-banner">🔒 {claimerName} δηλώνει ότι βρήκε τη λέξη…</div>
-        </div>
-      )}
+        {!isFinished && claimer && (
+          <div className="kr-claim">
+            <div className="kr-banner"><LockIcon />{claimerName} λέει ότι βρήκε τη λέξη…</div>
+          </div>
+        )}
 
-      {/* Ο setter βλέπει τη λέξη να συμπληρώνεται σταδιακά (μόνο τα γράμματα που
-          έχουν βρεθεί), εκτός αν τελείωσε ο γύρος που αποκαλύπτεται όλη. */}
-      <WordDisplay word={word} guessed={guessed} revealed={isFinished} lastGuessed={lastGuessed} />
+        {/* Ο setter βλέπει τη λέξη να συμπληρώνεται σταδιακά (μόνο τα γράμματα που
+            έχουν βρεθεί), εκτός αν τελείωσε ο γύρος που αποκαλύπτεται όλη. */}
+        <WordDisplay word={word} guessed={guessed} revealed={isFinished} lastGuessed={lastGuessed} />
+      </main>
 
       {/* Read-only keyboard showing guesser's guesses */}
       <Keyboard word={word} guessed={guessed} onGuess={() => {}} disabled={true} />
@@ -88,24 +84,17 @@ export default function Watch({ room, session, onHome }) {
       <GuessFeed log={log} players={players} />
 
       {isFinished && (
-        <div className="scrim" role="dialog" aria-modal="true">
-          <div className={`modal ${isWon ? 'win' : 'over'}`}>
-            <div className="badge">
-              {isWon
-                ? <BrandSvg />
-                : <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" width="40" height="40"><path d="M4 12a8 8 0 1 0 2.5-5.8"/><path d="M4 4v4h4"/></svg>
-              }
-            </div>
-            <h3>{isWon ? 'Βρήκαν τη λέξη!' : 'Δεν τα κατάφεραν'}</h3>
-            <p className="msg">{isWon ? 'Η λέξη σου βρέθηκε!' : 'Η λέξη έμεινε κρυφή'}</p>
-            <div className="reveal">
-              <span className="lab">Η λέξη σου</span>
-              {[...word].map((l, i) => <span key={i}>{l}</span>)}
-            </div>
-            <button className="btn" style={{ marginTop: '18px' }} onClick={handleReset}>Νέο παιχνίδι</button>
-            <button className="btn ghost" onClick={onHome}>Έξοδος</button>
-          </div>
-        </div>
+        <ResultSheet
+          label="Η λέξη σου"
+          title={isWon ? 'Τη βρήκαν!' : 'Δεν τη βρήκαν'}
+          msg={isWon ? 'Η λέξη σου βρέθηκε.' : 'Η λέξη έμεινε κρυφή.'}
+          word={word}
+          wordLabel="Η λέξη σου"
+          loss={isWon}
+        >
+          <button className="pp-btn pp-btn--lg pp-btn--block" type="button" onClick={handleReset}>Νέο παιχνίδι</button>
+          <button className="pp-btn pp-btn--secondary pp-btn--block" type="button" onClick={onHome}>Έξοδος</button>
+        </ResultSheet>
       )}
     </div>
   )

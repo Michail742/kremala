@@ -88,8 +88,10 @@ export default function App() {
 
   if (session && !loaded) {
     return (
-      <div className="app t-mint" style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <div className="loading-dot" />
+      <div className="pp-screen kr-view">
+        <main className="pp-screen__body kr-center">
+          <p className="kr-wait">Σύνδεση στο δωμάτιο…</p>
+        </main>
       </div>
     )
   }

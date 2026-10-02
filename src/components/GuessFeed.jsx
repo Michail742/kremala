@@ -30,11 +30,11 @@ export default function GuessFeed({ log, players }) {
 
   if (toasts.length === 0) return null
   return (
-    <div className="guess-feed" aria-live="polite">
+    <div className="kr-feed" aria-live="polite">
       {toasts.map(g => (
-        <div key={g.id} className={`guess-feed-item${g.hit ? ' hit' : ' miss'}`}>
-          <span className="guess-feed-name">{players?.[g.pid]?.name || '?'}</span>
-          <span className="guess-feed-letter">{g.letter}</span>
+        <div key={g.id} className={`kr-feed__item${g.hit ? ' hit' : ' miss'}`}>
+          <span className="kr-feed__name">{players?.[g.pid]?.name || '?'}</span>
+          <span className="kr-feed__letter">{g.letter}</span>
         </div>
       ))}
     </div>

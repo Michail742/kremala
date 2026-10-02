@@ -9,19 +9,21 @@ export default function SkinPicker({ activeSkinId, onChange }) {
   }
 
   return (
-    <div className="skin-picker">
-      <div className="skin-picker-grid">
+    <div className="kr-skins">
+      <span className="pp-label">Ο χαρακτήρας σου</span>
+      <div className="kr-skins__grid">
         {SKINS.map(skin => (
           <button
             key={skin.id}
-            className={`skin-btn${activeSkinId === skin.id ? ' active' : ''}`}
+            type="button"
+            className="kr-skin"
+            aria-pressed={activeSkinId === skin.id}
             onClick={() => handleSelect(skin)}
-            title={skin.name}
           >
-            <div className="skin-btn-preview">
+            <span className="kr-skin__preview" aria-hidden="true">
               <Character wrongGuesses={6} skinId={skin.id} />
-            </div>
-            <span className="skin-btn-name">{skin.name}</span>
+            </span>
+            <span className="kr-skin__name">{skin.name}</span>
           </button>
         ))}
       </div>

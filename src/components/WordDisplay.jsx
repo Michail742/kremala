@@ -1,7 +1,7 @@
 export default function WordDisplay({ word, guessed = {}, revealed = false, lastGuessed = null }) {
   let revealCount = 0
   return (
-    <div className="word" aria-label="Λέξη" aria-live="polite">
+    <div className="kr-word" style={{ '--n': word.length || 1 }} aria-label="Λέξη" aria-live="polite">
       {[...word].map((letter, i) => {
         const show = revealed || guessed[letter]
         const isNew = lastGuessed === letter && !!guessed[letter]
@@ -9,7 +9,7 @@ export default function WordDisplay({ word, guessed = {}, revealed = false, last
         return (
           <div
             key={i}
-            className={`tile ${show ? 'filled' : 'blank'}${isNew ? ' anim-reveal' : ''}`}
+            className={`kr-tile ${show ? 'filled' : 'blank'}${isNew ? ' anim-reveal' : ''}`}
             style={isNew ? { animationDelay: `${delay}ms` } : undefined}
           >
             {letter}

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { setWord } from '../hooks/useRoom'
+import TopBar from '../components/TopBar'
 
 const GREEK_UPPER = 'ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ'
 
@@ -22,7 +23,7 @@ export default function SetWord({ room, session, onHome }) {
 
   async function handleSubmit() {
     const w = filterGreek(word.trim())
-    if (w.length < 3) { setError('Τουλάχιστον 3 γράμματα'); return }
+    if (w.length < 3) { setError('Η λέξη θέλει τουλάχιστον 3 γράμματα.'); return }
     setLoading(true)
     try {
       await setWord(session.roomCode, w)
@@ -33,36 +34,31 @@ export default function SetWord({ room, session, onHome }) {
   }
 
   return (
-    <div className="app t-mint">
-      <div className="set-word-content">
-        <div className="set-word-top">
-          <p className="set-word-sub">{guesserName} θα μαντέψ{guessers.length === 1 ? 'ει' : 'ουν'}</p>
-          <h2 className="set-word-title">Δώσε μια λέξη</h2>
-        </div>
-
-        <div className="set-word-input-wrap">
-          <input
-            className="field-input set-word-input"
-            type="text"
-            placeholder="π.χ. ΘΑΛΑΣΣΑ"
-            value={word}
-            onChange={e => { setWordInput(filterGreek(e.target.value)); setError('') }}
-            autoComplete="off"
-            autoCorrect="off"
-            spellCheck={false}
-          />
-          {word && <p className="char-count">{word.length} γράμματα</p>}
-        </div>
-
-        {error && <p className="error-msg">{error}</p>}
-
-        <div className="set-word-btns">
-          <button className="btn" onClick={handleSubmit} disabled={loading || word.length < 3}>
-            {loading ? '...' : 'Έτοιμο!'}
-          </button>
-          <button className="btn ghost" onClick={onHome}>Έξοδος</button>
-        </div>
-      </div>
+    <div className="pp-screen kr-view">
+      <TopBar onBack={onHome} backLabel="Έξοδος από το δωμάτιο" title="Κρεμάλα" sub="Η σειρά σου" />
+      <main className="pp-screen__body kr-center">
+        <span className="pp-label">{guesserName} θα μαντέψ{guessers.length === 1 ? 'ει' : 'ουν'}</span>
+        <h2 className="kr-setword">Δώσε μια λέξη</h2>
+        <input
+          className="pp-input kr-wordinput"
+          type="text"
+          placeholder="ΘΑΛΑΣΣΑ"
+          aria-label="Η λέξη σου"
+          value={word}
+          onChange={e => { setWordInput(filterGreek(e.target.value)); setError('') }}
+          onKeyDown={e => { if (e.key === 'Enter') handleSubmit() }}
+          autoComplete="off"
+          autoCorrect="off"
+          spellCheck={false}
+        />
+        <span className="pp-field__hint">{word ? `${word.length} γράμματα` : 'Μόνο ελληνικά, τουλάχιστον 3 γράμματα'}</span>
+        {error && <p className="kr-error" role="alert">{error}</p>}
+      </main>
+      <footer className="pp-screen__footer">
+        <button className="pp-btn pp-btn--lg pp-btn--block" type="button" onClick={handleSubmit} disabled={loading || word.length < 3}>
+          {loading ? 'Αποθήκευση…' : 'Έτοιμο'}
+        </button>
+      </footer>
     </div>
   )
 }

@@ -1,14 +1,18 @@
 <!DOCTYPE html>
-<html lang="el">
+<html lang="el" data-game="kremala">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>ΚΡΕΜΑΛΑ</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <meta name="theme-color" content="#141426" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#f8f4ec" media="(prefers-color-scheme: light)" />
+  <title>Κρεμάλα · Παιχνιδοπαρέα</title>
+  <!-- Εικονίδια και κοινό stylesheet έρχονται από το hub, ώστε να δουλεύουν και εκεί και σε dev. -->
+  <link rel="icon" href="https://paixnidoparea.vercel.app/icons/icon.svg" type="image/svg+xml" />
+  <link rel="icon" href="https://paixnidoparea.vercel.app/icons/favicon.png" sizes="48x48" />
+  <link rel="apple-touch-icon" href="https://paixnidoparea.vercel.app/icons/apple-touch-icon.png" />
+  <link rel="stylesheet" href="https://paixnidoparea.vercel.app/shared/pp.css" />
 </head>
-<body>
+<body class="pp-app">
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 </body>

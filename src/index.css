@@ -1,716 +1,129 @@
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { -webkit-text-size-adjust: 100%; }
-
+/* Κρεμάλα: μόνο ό,τι ανήκει σε αυτό το παιχνίδι. Τα κοινά (tokens, κουμπιά, πληκτρολόγιο, φύλλα, top bar)
+   έρχονται από το /shared/pp.css του hub, που φορτώνεται στο index.html. */
 :root {
   --char-skin: #bfe9d4;
   --char-hair: #21b58e;
   --char-line: #173a2e;
 }
-body {
-  font-family: 'Nunito', system-ui, sans-serif;
-  background: #d7e4dd;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  min-height: 100dvh;
-  display: flex;
-  justify-content: center;
-}
-button { font: inherit; color: inherit; border: none; background: none; cursor: pointer; }
 svg { display: block; }
 
-/* ============================================================
-   THEME · MINT
-   ============================================================ */
-.t-mint {
-  --bg: #eef7f1;
-  --surface: #ffffff;
-  --ink: #173a2e;
-  --muted: #9bb8ab;
-  --hair: #dcece2;
-  --accent: #21b58e;
-  --accent-strong: #149173;
-  --accent-soft: #d3f0e4;
-  --on-accent: #fff;
-  /* char vars come from :root — overridden per skin */
-  --good: #15a36e;
-  --good-ink: #0f7d54;
-  --good-soft: #d7f1e3;
-  --good-bd: #b3e3cd;
-  --tile-line: #d6e8de;
-  --key-bg: #ffffff;
-  --key-ink: #1c3a30;
-  --key-bd: #dcece2;
-  --key-shadow: #e1efe7;
-  --key-hover: #effaf4;
-  --scrim: rgba(23,58,46,.30);
+@media (prefers-reduced-motion: no-preference) {
+  .kr-view { animation: pp-fade 200ms ease-out; }
 }
 
-/* ============================================================
-   APP SHELL
-   ============================================================ */
-.app {
-  width: 100%;
-  max-width: 460px;
-  min-height: 100dvh;
-  background: var(--bg);
-  display: flex;
-  flex-direction: column;
-  padding: max(20px, env(safe-area-inset-top)) 20px max(28px, env(safe-area-inset-bottom));
-  position: relative;
-}
+/* Οι οθόνες παιχνιδιού αφήνουν το safe-area στο πληκτρολόγιο, που κάθεται κολλητά κάτω. */
+.pp-screen.kr-noinset { padding-bottom: 0; }
 
-/* ---------- NAV ---------- */
-.nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 2px 0 6px;
-  flex-shrink: 0;
+/* ---------- Αρχική ---------- */
+.kr-home { justify-content: center; align-items: center; text-align: center; gap: var(--space-5); }
+.kr-titles { display: flex; flex-direction: column; gap: var(--space-1); }
+.kr-title { margin: 0; font: 900 64px/58px var(--font-display); text-transform: uppercase; }
+.kr-hero { width: 132px; height: 168px; }
+.kr-skins { display: flex; flex-direction: column; gap: var(--space-2); width: 100%; }
+.kr-skins__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2); }
+.kr-skin {
+  appearance: none; border: 0; margin: 0;
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-1);
+  padding: var(--space-2) 0;
+  border-radius: var(--radius-m);
+  background: var(--surface); color: var(--ink-muted);
+  cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
 }
-.brand { display: flex; align-items: center; gap: 9px; }
-.brand-mark {
-  width: 32px; height: 32px; border-radius: 10px;
-  background: var(--accent);
-  display: grid; place-items: center;
-  color: var(--on-accent);
-  box-shadow: 0 6px 14px -6px var(--accent);
-}
-.brand-mark.lg {
-  width: 56px; height: 56px; border-radius: 18px;
-  margin: 0 auto 14px;
-  box-shadow: 0 10px 24px -10px var(--accent);
-}
-.brand-name { font-size: 16px; font-weight: 900; letter-spacing: .02em; color: var(--ink); }
-.nav-right { display: flex; align-items: center; gap: 8px; }
-.nav-exit {
-  font-size: 12px; font-weight: 800; color: var(--muted);
-  background: var(--surface); border: 1px solid var(--hair);
-  border-radius: 10px; padding: 5px 11px; cursor: pointer;
-  transition: border-color .15s, color .15s;
-}
-.nav-exit:active { transform: translateY(1px); }
-.nav-exit:hover { border-color: var(--accent); color: var(--ink); }
-.score {
-  display: flex; align-items: center; gap: 4px;
-  background: var(--surface); border: 1px solid var(--hair);
-  border-radius: 999px; padding: 5px 6px;
-}
-.score .stat {
-  display: flex; align-items: center; gap: 5px;
-  padding: 1px 7px; font-weight: 900; font-size: 13px;
-}
-.score .win { color: var(--good-ink); }
-.score .win svg { color: var(--good); }
-.score .loss { color: var(--muted); }
-.score .sep { width: 1px; height: 16px; background: var(--hair); }
-.icon-btn {
-  width: 38px; height: 38px; border-radius: 12px;
-  background: var(--surface); border: 1px solid var(--hair);
-  display: grid; place-items: center; color: var(--ink);
-  transition: transform .15s ease, background .15s ease;
-}
-.icon-btn:active { transform: rotate(-35deg) scale(.95); background: var(--accent-soft); }
+.kr-skin[aria-pressed="true"] { color: var(--ink); background: color-mix(in srgb, var(--accent) 14%, var(--surface)); box-shadow: inset 0 0 0 2px var(--accent-ink); }
+.kr-skin__preview { width: 44px; height: 54px; }
+.kr-skin__name { font: 600 12px/16px var(--font-sans); }
+@media (max-height: 700px) { .kr-hero { display: none; } }
 
-/* ---------- CHARACTER STAGE ---------- */
-.stage {
-  flex: 1 1 auto;
-  min-height: 0;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 14px;
-  padding: 6px 0 2px;
-}
-.lives { display: flex; gap: 9px; align-items: center; }
-.lives .pip { width: 19px; height: 19px; color: var(--accent); }
-.lives .pip.lost { color: var(--muted); opacity: .42; }
-.lives .pip path { fill: currentColor; }
-.lives .pip.lost path { fill: none; stroke: currentColor; stroke-width: 2.2; }
+.kr-stack { display: flex; flex-direction: column; gap: var(--space-6); padding-bottom: var(--space-4); }
+.kr-group { display: flex; flex-direction: column; gap: var(--space-2); }
+.kr-grouphead { display: flex; align-items: center; justify-content: space-between; }
+.kr-center { justify-content: center; align-items: center; text-align: center; }
+.kr-error { margin: 0; font: 500 14px/20px var(--font-sans); color: var(--danger-ink); }
+.kr-wait { margin: 0; text-align: center; font: 500 15px/22px var(--font-sans); color: var(--ink-muted); }
 
-.char-wrap {
-  width: 188px; height: 230px;
-  display: grid; place-items: center;
-  position: relative;
-  overflow: hidden;
-}
-.char-wrap svg { width: 100%; height: 100%; overflow: visible; }
-.char-platform {
-  position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%);
-  width: 130px; height: 20px; border-radius: 50%;
-  background: var(--accent-soft); filter: blur(.5px); opacity: .85;
-}
+/* ---------- Σκηνή χαρακτήρα ---------- */
+.kr-play { gap: var(--space-3); padding-bottom: var(--space-3); }
+.kr-stage { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-3); }
+.kr-lives { display: flex; gap: 8px; align-items: center; }
+.kr-lives .pip { width: 20px; height: 20px; color: var(--accent-ink); }
+.kr-lives .pip path { fill: currentColor; }
+.kr-lives .pip.lost { color: var(--ink-muted); opacity: .5; }
+.kr-lives .pip.lost path { fill: none; stroke: currentColor; stroke-width: 2.2; }
+.kr-char { position: relative; flex: 1; min-height: 0; width: 100%; max-height: 230px; }
+.kr-platform { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); width: 130px; height: 18px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 22%, transparent); }
+.kr-cap { min-height: 18px; margin: 0; font: 600 13px/18px var(--font-sans); color: var(--ink-muted); }
 
-/* Character piece styles */
+/* Μέρη του χαρακτήρα: όσα δεν έχουν «χτιστεί» ακόμη φαίνονται διακεκομμένα. */
 .c-skin  { fill: var(--char-skin); }
 .c-fill  { fill: var(--char-hair); }
 .c-line  { fill: none; stroke: var(--char-line); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
 .c-ink   { fill: var(--char-line); }
 .c-cheek { fill: var(--char-hair); opacity: .28; }
 .c-out   { stroke: var(--char-line); stroke-width: 4; }
-
 [data-ghost] {
   fill: none !important;
-  stroke: var(--muted) !important;
+  stroke: var(--ink-muted) !important;
   stroke-width: 3.5 !important;
   stroke-dasharray: 6 8 !important;
   stroke-linecap: round !important;
   stroke-linejoin: round !important;
-  opacity: 0.5 !important;
+  opacity: .5 !important;
 }
-[data-ghost][data-cheek] {
-  fill: var(--muted) !important;
-  stroke: none !important;
-  stroke-dasharray: none !important;
-  opacity: 0.12 !important;
-}
+[data-ghost][data-cheek] { fill: var(--ink-muted) !important; stroke: none !important; stroke-dasharray: none !important; opacity: .12 !important; }
 
-/* ============================================================
-   SKIN PICKER
-   ============================================================ */
-.skin-picker {
-  margin-top: 20px;
-}
-.skin-picker-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-.skin-btn-preview {
-  width: 62px;
-  height: 76px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.skin-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  padding: 10px 6px 8px;
-  border-radius: 14px;
-  border: 2px solid var(--key-bd);
-  background: var(--key-bg);
-  cursor: pointer;
-  transition: border-color .15s, background .15s, transform .1s;
-}
-.skin-btn:hover {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-}
-.skin-btn.active {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-  box-shadow: 0 0 0 3px var(--accent-soft);
-}
-.skin-btn:active { transform: scale(.96); }
-.skin-btn-name {
-  font-size: 11px;
-  font-weight: 700;
+/* ---------- Λέξη ---------- */
+/* Τα κουτάκια μικραίνουν ώστε η λέξη να χωρά πάντα σε μία γραμμή (--n = πλήθος γραμμάτων). */
+.kr-word { --gap: 6px; container-type: inline-size; display: flex; justify-content: center; gap: var(--gap); width: 100%; flex: none; }
+.kr-tile {
+  flex: 0 1 44px; min-width: 0; height: 56px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 800; line-height: 1;
+  font-size: min(36px, calc((100cqw - (var(--n) - 1) * var(--gap)) / var(--n) * .9));
   color: var(--ink);
-  letter-spacing: .01em;
+  border-bottom: 4px solid var(--line-strong);
 }
+.kr-tile.filled { border-bottom-color: var(--accent); }
+.kr-tile.blank { color: transparent; }
+@media (prefers-reduced-motion: no-preference) {
+  .kr-tile.anim-reveal { animation: kr-pop .32s cubic-bezier(.34, 1.4, .64, 1) both; }
+}
+@keyframes kr-pop { from { transform: scale(.6); opacity: 0; } }
 
-.stage-cap { font-size: 12.5px; font-weight: 700; color: var(--muted); letter-spacing: .02em; }
+/* ---------- «Το βρήκα» ---------- */
+.kr-claim { flex: none; }
+.kr-banner { display: flex; align-items: center; justify-content: center; gap: var(--space-2); padding: var(--space-3) var(--space-4); border-radius: var(--radius-m); background: var(--surface); font: 600 15px/22px var(--font-sans); text-align: center; }
+.kr-banner svg { width: 18px; height: 18px; flex: none; color: var(--accent-ink); }
+.kr-banner.is-muted { color: var(--ink-muted); }
+.kr-claimbox { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3); border-radius: var(--radius-m); background: var(--surface); box-shadow: inset 0 0 0 2px var(--accent-ink); }
+.kr-claimrow { display: flex; gap: var(--space-2); }
+.kr-claimrow .pp-input { flex: 1; min-width: 0; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; }
+.kr-claimrow .pp-btn { padding: 0 var(--space-5); }
 
-/* ---------- WORD DISPLAY ---------- */
-.word {
-  display: flex; flex-wrap: wrap; gap: 10px;
-  justify-content: center; align-items: flex-end;
-  padding: 8px 0 14px;
-  flex-shrink: 0;
-}
-.tile {
-  width: 40px; height: 54px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 32px; font-weight: 900; color: var(--ink);
-  border-bottom: 4px solid var(--tile-line);
-  position: relative;
-}
-.tile.filled { border-bottom-color: var(--accent); }
-.tile.filled::after {
-  content: '';
-  position: absolute; bottom: -4px; left: 0; right: 0;
-  height: 4px; background: var(--accent); border-radius: 3px;
-}
-.tile.blank { color: transparent; }
+/* ---------- Ποιος έπαιξε ποιο γράμμα ---------- */
+.kr-feed { position: fixed; top: calc(env(safe-area-inset-top, 0px) + 60px); left: 50%; transform: translateX(-50%); z-index: 40; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; width: max-content; max-width: 88%; pointer-events: none; }
+.kr-feed__item { display: inline-flex; align-items: center; gap: 6px; padding: 4px 6px 4px 10px; border-radius: var(--radius-pill); background: var(--surface-raised); color: var(--ink); box-shadow: var(--lift); font: 700 12px/16px var(--font-sans); animation: kr-toast 2s ease forwards; }
+.kr-feed__name { max-width: 96px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kr-feed__letter { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 4px; border-radius: 6px; font-weight: 800; }
+.kr-feed__item.hit .kr-feed__letter { background: var(--success); color: var(--on-bright); }
+.kr-feed__item.miss .kr-feed__letter { background: var(--surface-sunken); color: var(--ink-muted); text-decoration: line-through; }
+@keyframes kr-toast { 0% { opacity: 0; transform: translateY(6px); } 12%, 78% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-4px); } }
+@media (prefers-reduced-motion: reduce) { .kr-feed__item { animation: none; } }
 
-@keyframes tile-pop {
-  0%   { transform: scale(0.55) rotateY(90deg); opacity: 0; }
-  55%  { transform: scale(1.14) rotateY(-6deg); }
-  75%  { transform: scale(0.97) rotateY(2deg); }
-  100% { transform: scale(1) rotateY(0deg); opacity: 1; }
-}
-@keyframes tile-wave {
-  0%,100% { transform: translateY(0); }
-  40%     { transform: translateY(-9px); }
-}
-.tile.anim-reveal {
-  animation: tile-pop .38s cubic-bezier(.34,1.4,.64,1) both;
-}
-.tile.anim-wave {
-  animation: tile-wave .5s ease both;
-}
+/* ---------- Αντίπαλοι στο «Ποιος πρώτος» ---------- */
+.kr-opps { display: flex; flex-direction: column; gap: var(--space-1); max-height: 26vh; overflow-y: auto; flex: none; }
+.kr-opp { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-3); border-radius: var(--radius-m); background: var(--surface); }
+.kr-opp__name { flex: 1; min-width: 0; font: 700 14px/20px var(--font-sans); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kr-opp__lives { display: flex; gap: 3px; }
+.kr-opp__pip { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-ink); }
+.kr-opp__pip.lost { background: var(--ink-muted); opacity: .35; }
+.kr-opp__state { min-width: 56px; text-align: right; font: 700 13px/18px var(--font-sans); color: var(--ink-muted); font-variant-numeric: tabular-nums; }
+.kr-opp.is-lost { opacity: .55; }
+.kr-opp.is-won { box-shadow: inset 0 0 0 2px var(--success-ink); }
+.kr-opp.is-won .kr-opp__state { color: var(--success-ink); }
 
-/* ---------- KEYBOARD ---------- */
-.keyboard {
-  display: flex; flex-direction: column; gap: 8px;
-  padding-top: 4px;
-  flex-shrink: 0;
-}
-/* Οι μπάρες κρατούν ίσο πλάτος πλήκτρου σε όλες τις σειρές (10 πλήκτρα ανά πλάτος). */
-.krow { display: flex; gap: 6px; }
-.krow-1 { padding: 0 10%; }
-.krow-2 { padding: 0 5%; }
-.krow-3 { padding: 0 15%; }
-.key {
-  flex: 1 1 0; min-width: 0;
-  height: 46px;
-  border-radius: 10px;
-  display: grid; place-items: center;
-  font-size: 18px; font-weight: 800;
-  color: var(--key-ink);
-  background: var(--key-bg);
-  border: 1px solid var(--key-bd);
-  box-shadow: 0 2px 0 var(--key-shadow);
-  transition: transform .08s ease, background .12s ease, box-shadow .08s ease;
-  user-select: none;
-}
-.key:hover:not(.is-correct):not(.is-wrong) { background: var(--key-hover); }
-.key:active:not(.is-correct):not(.is-wrong) {
-  transform: translateY(2px);
-  box-shadow: 0 0 0 var(--key-shadow);
-  background: var(--accent-soft);
-  color: var(--accent-strong);
-  border-color: var(--accent);
-}
-.key:disabled { pointer-events: none; cursor: default; }
-.keyboard.is-locked .key:not(.is-correct):not(.is-wrong) { opacity: .45; }
-@media (min-width: 480px) {
-  .key { height: 52px; font-size: 20px; border-radius: 12px; }
-}
-.key.is-correct {
-  background: var(--good-soft); color: var(--good-ink);
-  border-color: var(--good-bd);
-  box-shadow: none; pointer-events: none;
-}
-.key.is-wrong {
-  background: transparent; color: var(--muted);
-  border-color: var(--hair);
-  box-shadow: none; opacity: .45; pointer-events: none;
-}
+/* ---------- Δώσε λέξη ---------- */
+.kr-setword { margin: 0; font: 800 44px/44px var(--font-display); }
+.kr-wordinput { height: 72px; text-align: center; font: 800 32px/1 var(--font-display); letter-spacing: .08em; text-transform: uppercase; }
 
-/* ============================================================
-   GUESS FEED (κοινό board — ποιος έπαιξε ποιο γράμμα)
-   ============================================================ */
-.guess-feed {
-  /* Πάνω-κέντρο, εκτός ροής ώστε να ΜΗΝ σπρώχνει το πληκτρολόγιο όταν εμφανίζεται/φεύγει */
-  position: absolute;
-  top: 56px; left: 50%; transform: translateX(-50%);
-  z-index: 4; pointer-events: none;
-  display: flex; flex-wrap: wrap; gap: 6px;
-  justify-content: center; align-content: flex-start;
-  width: max-content; max-width: 88%;
-  max-height: 96px; overflow: hidden;
-}
-.guess-feed-item {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 4px 8px 4px 10px; border-radius: 999px;
-  border: 1px solid var(--hair); background: var(--surface);
-  font-size: 12px; font-weight: 700; line-height: 1;
-  animation: guessToast 2s ease forwards;
-}
-@keyframes guessToast {
-  0%   { opacity: 0; transform: translateY(6px) scale(.96); }
-  12%  { opacity: 1; transform: translateY(0) scale(1); }
-  78%  { opacity: 1; transform: translateY(0) scale(1); }
-  100% { opacity: 0; transform: translateY(-4px) scale(.98); }
-}
-.guess-feed-name { color: var(--ink); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.guess-feed-letter {
-  display: inline-grid; place-items: center;
-  min-width: 18px; height: 18px; padding: 0 4px;
-  border-radius: 6px; font-weight: 900;
-}
-.guess-feed-item.hit .guess-feed-letter { background: var(--good-soft); color: var(--good-ink); }
-.guess-feed-item.miss { opacity: .6; }
-.guess-feed-item.miss .guess-feed-letter { background: var(--hair); color: var(--muted); }
-
-/* ============================================================
-   SCOREBOARD (βαθμολογία δωματίου)
-   ============================================================ */
-.scoreboard {
-  width: 100%; max-width: 360px; margin: 4px auto 0;
-  background: var(--surface); border: 1px solid var(--hair);
-  border-radius: 16px; padding: 10px 12px;
-}
-.scoreboard-title {
-  font-size: 11px; font-weight: 800; letter-spacing: .12em;
-  text-transform: uppercase; color: var(--muted);
-  text-align: center; margin-bottom: 6px;
-}
-.scoreboard-list { display: flex; flex-direction: column; gap: 2px; }
-.scoreboard-row {
-  display: flex; align-items: center; gap: 8px;
-  padding: 6px 8px; border-radius: 10px;
-  font-size: 14px; font-weight: 700; color: var(--ink);
-}
-.scoreboard-row.me { background: var(--accent-soft); }
-.scoreboard-rank { width: 18px; color: var(--muted); font-weight: 800; }
-.scoreboard-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.scoreboard-pts {
-  min-width: 26px; text-align: center; font-weight: 900;
-  color: var(--accent-strong);
-}
-
-/* Ανάλυση κατανομής πόντων του γύρου (στο end-of-round modal) */
-.breakdown {
-  width: 100%; max-width: 360px; margin: 10px auto 0;
-  background: var(--surface); border: 1px solid var(--hair);
-  border-radius: 16px; padding: 10px 12px;
-}
-.breakdown-title {
-  font-size: 11px; font-weight: 800; letter-spacing: .12em;
-  text-transform: uppercase; color: var(--muted);
-  text-align: center; margin-bottom: 6px;
-}
-.breakdown-list { display: flex; flex-direction: column; gap: 4px; }
-.breakdown-row { padding: 6px 8px; border-radius: 10px; }
-.breakdown-row.me { background: var(--accent-soft); }
-.breakdown-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.breakdown-name {
-  font-size: 14px; font-weight: 700; color: var(--ink);
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.breakdown-total { font-weight: 900; color: var(--accent-strong); }
-.breakdown-parts { font-size: 12px; color: var(--muted); margin-top: 1px; }
-
-/* «Το βρήκα» (claim) ζώνη */
-.claim-zone { width: 100%; max-width: 360px; margin: 12px auto 0; }
-.claim-btn {
-  width: 100%; background: var(--accent-strong); color: #fff;
-  font-weight: 900; letter-spacing: .02em;
-}
-.claim-banner {
-  text-align: center; font-size: 14px; font-weight: 800; color: var(--ink);
-  background: var(--surface); border: 1px solid var(--hair);
-  border-radius: 14px; padding: 12px 14px;
-}
-.claim-banner.muted { color: var(--muted); font-weight: 700; }
-.claim-box {
-  background: var(--surface); border: 1px solid var(--accent-strong);
-  border-radius: 16px; padding: 12px 14px;
-}
-.claim-title { font-size: 13px; font-weight: 800; color: var(--ink); margin: 0 0 8px; text-align: center; }
-.claim-row { display: flex; gap: 8px; align-items: stretch; }
-.claim-row .claim-input { flex: 1 1 auto; width: auto; min-width: 0; text-transform: uppercase; letter-spacing: .08em; }
-.claim-row .claim-submit { flex: 0 0 auto; width: auto; padding-left: 22px; padding-right: 22px; }
-.claim-hint { font-size: 11px; color: var(--muted); margin: 8px 0 0; text-align: center; }
-
-/* ============================================================
-   MODALS
-   ============================================================ */
-.scrim {
-  position: absolute; inset: 0; z-index: 5;
-  background: var(--scrim);
-  backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px);
-  display: flex; align-items: center; justify-content: center;
-  padding: 24px;
-}
-.modal {
-  width: 100%; background: var(--surface);
-  border-radius: 28px; padding: 30px 26px 26px;
-  text-align: center;
-  box-shadow: 0 30px 60px -24px rgba(10,14,25,.5);
-  border: 1px solid var(--hair);
-}
-.modal .badge {
-  width: 78px; height: 78px; border-radius: 24px;
-  margin: 0 auto 16px;
-  display: grid; place-items: center;
-}
-.modal.win .badge  { background: var(--good-soft); color: var(--good); }
-.modal.over .badge { background: var(--accent-soft); color: var(--accent); }
-.modal h3 { font-size: 30px; font-weight: 900; letter-spacing: -.01em; color: var(--ink); }
-.modal .msg { margin-top: 6px; font-size: 15px; color: var(--muted); font-weight: 600; }
-.modal .reveal {
-  margin: 18px auto 4px;
-  display: inline-flex; flex-wrap: wrap; gap: 7px;
-  padding: 11px 16px;
-  background: var(--bg); border-radius: 14px;
-  justify-content: center;
-}
-.modal .reveal span { font-size: 22px; font-weight: 900; color: var(--ink); }
-.modal .reveal .lab {
-  display: block; width: 100%;
-  font-size: 11px; font-weight: 800;
-  letter-spacing: .12em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 4px;
-}
-.modal .score-row {
-  display: flex; justify-content: center; gap: 20px;
-  margin: 18px 0 22px;
-}
-.modal .score-row div { font-size: 13px; font-weight: 700; color: var(--muted); }
-.modal .score-row b { display: block; font-size: 24px; font-weight: 900; color: var(--ink); margin-top: 2px; }
-
-/* ---------- BUTTONS ---------- */
-.btn {
-  width: 100%; height: 54px; border-radius: 16px;
-  font-size: 17px; font-weight: 900;
-  background: var(--accent); color: var(--on-accent);
-  box-shadow: 0 12px 22px -10px var(--accent);
-  letter-spacing: .01em;
-  transition: transform .12s ease, opacity .12s ease;
-}
-.btn:active { transform: translateY(2px); }
-.btn:disabled { opacity: .45; pointer-events: none; }
-.btn.ghost {
-  background: transparent; color: var(--muted);
-  box-shadow: none; height: 46px; font-size: 15px; margin-top: 4px;
-}
-
-/* ============================================================
-   MULTIPLAYER — HOME
-   ============================================================ */
-.home-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 22px;
-  padding-top: 16px;
-}
-.home-brand { text-align: center; }
-.home-title {
-  font-size: 34px; font-weight: 900;
-  color: var(--ink); letter-spacing: .02em;
-}
-.home-sub {
-  font-size: 12px; font-weight: 800;
-  color: var(--muted); letter-spacing: .12em;
-  text-transform: uppercase; margin-top: 2px;
-}
-
-.field-group { display: flex; flex-direction: column; gap: 7px; }
-.field-label {
-  font-size: 11px; font-weight: 800;
-  letter-spacing: .1em; text-transform: uppercase;
-  color: var(--muted); padding-left: 4px;
-}
-.field-input {
-  width: 100%; height: 52px;
-  border-radius: 16px;
-  border: 1.5px solid var(--hair);
-  background: var(--surface);
-  font: inherit; font-size: 17px; font-weight: 700;
-  color: var(--ink); padding: 0 18px;
-  outline: none;
-  transition: border-color .15s;
-  -webkit-appearance: none;
-}
-.field-input:focus { border-color: var(--accent); }
-.field-input::placeholder { color: var(--muted); font-weight: 600; }
-
-.code-input {
-  letter-spacing: .2em; text-align: center;
-  font-size: 26px; font-weight: 900; text-transform: uppercase;
-}
-
-.mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.mode-card {
-  display: flex; flex-direction: column; align-items: flex-start;
-  gap: 5px; padding: 16px 14px;
-  border-radius: 18px; background: var(--surface);
-  border: 2px solid var(--hair); text-align: left;
-  transition: border-color .15s, background .15s;
-  cursor: pointer;
-}
-.mode-card:hover { border-color: var(--muted); }
-.mode-card.active {
-  border-color: var(--accent); background: var(--accent-soft);
-}
-.mode-card.active .mode-name { color: var(--accent-strong); }
-.mode-icon {
-  width: 32px; height: 32px; border-radius: 10px;
-  background: var(--bg); display: grid; place-items: center;
-  color: var(--accent);
-  margin-bottom: 4px;
-}
-.mode-card.active .mode-icon { background: var(--on-accent); }
-.mode-name { font-size: 13px; font-weight: 900; color: var(--ink); }
-.mode-desc { font-size: 11px; font-weight: 600; color: var(--muted); line-height: 1.45; }
-
-.action-area { display: flex; flex-direction: column; gap: 10px; }
-.action-btns, .join-area { display: flex; flex-direction: column; gap: 10px; }
-
-.error-msg {
-  font-size: 13px; font-weight: 700;
-  color: #c0392b; text-align: center;
-  padding: 10px 16px; background: #fdecea;
-  border-radius: 12px;
-}
-
-/* ============================================================
-   MULTIPLAYER — LOBBY & RACE-LOBBY
-   ============================================================ */
-.lobby-content {
-  flex: 1;
-  display: flex; flex-direction: column;
-  align-items: center; gap: 22px;
-  padding-top: 30px;
-}
-.lobby-code-wrap { text-align: center; }
-.lobby-code-label {
-  font-size: 11px; font-weight: 800;
-  letter-spacing: .12em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 10px;
-}
-.lobby-code {
-  font-size: 48px; font-weight: 900;
-  letter-spacing: .18em; color: var(--ink);
-  background: var(--surface); border: 2px solid var(--hair);
-  border-radius: 22px; padding: 14px 28px;
-  display: inline-block;
-}
-.lobby-code-hint {
-  font-size: 13px; font-weight: 600;
-  color: var(--muted); margin-top: 10px;
-}
-.lobby-players {
-  display: flex; flex-direction: column;
-  gap: 10px; width: 100%;
-}
-.lobby-player {
-  display: flex; align-items: center; gap: 10px;
-  padding: 14px 16px;
-  background: var(--surface); border: 1px solid var(--hair);
-  border-radius: 16px;
-  font-size: 15px; font-weight: 700; color: var(--ink);
-}
-.lobby-player.waiting { color: var(--muted); }
-.lobby-dot {
-  width: 10px; height: 10px; border-radius: 50%;
-  background: var(--accent); flex-shrink: 0;
-}
-.lobby-dot.pulse {
-  background: var(--muted);
-  animation: dot-pulse 1.4s ease infinite;
-}
-.lobby-dot.ready { background: var(--good); }
-@keyframes dot-pulse {
-  0%,100% { opacity: 1; transform: scale(1); }
-  50% { opacity: .3; transform: scale(.8); }
-}
-.lobby-you {
-  font-size: 12px; font-weight: 700; color: var(--muted);
-}
-.lobby-ready-tag {
-  margin-left: auto;
-  font-size: 11px; font-weight: 800; color: var(--good-ink);
-  background: var(--good-soft); border-radius: 8px; padding: 3px 9px;
-}
-.lobby-status {
-  font-size: 14px; font-weight: 700;
-  color: var(--muted); text-align: center;
-}
-.mt-auto { margin-top: auto; }
-
-/* ============================================================
-   MULTIPLAYER — SET WORD
-   ============================================================ */
-.set-word-content {
-  flex: 1;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 24px;
-}
-.set-word-top { text-align: center; }
-.set-word-sub { font-size: 13px; font-weight: 700; color: var(--muted); }
-.set-word-title { font-size: 26px; font-weight: 900; color: var(--ink); margin-top: 4px; }
-.set-word-input-wrap { width: 100%; }
-.set-word-input {
-  font-size: 22px; font-weight: 900;
-  letter-spacing: .1em; text-align: center;
-  text-transform: uppercase; height: 64px;
-}
-.char-count {
-  font-size: 12px; font-weight: 700;
-  color: var(--muted); text-align: center; margin-top: 8px;
-}
-.set-word-btns { width: 100%; display: flex; flex-direction: column; gap: 8px; }
-
-/* ============================================================
-   MULTIPLAYER — PLAYER BADGES & TAGS
-   ============================================================ */
-.player-badge {
-  font-size: 12px; font-weight: 800; color: var(--muted);
-  background: var(--surface); border: 1px solid var(--hair);
-  border-radius: 10px; padding: 4px 10px;
-}
-.watch-badge {
-  font-size: 12px; font-weight: 800; color: var(--accent);
-  background: var(--accent-soft); border-radius: 10px; padding: 4px 10px;
-}
-
-/* ============================================================
-   MULTIPLAYER — RACE OPPONENT CARD
-   ============================================================ */
-.opponent-card {
-  display: flex; align-items: center; gap: 10px;
-  background: var(--surface); border: 1px solid var(--hair);
-  border-radius: 14px; padding: 10px 14px;
-  flex-shrink: 0;
-}
-.opp-name { font-size: 13px; font-weight: 800; color: var(--ink); flex: 1; }
-.opp-lives { display: flex; gap: 4px; align-items: center; }
-.opp-pip {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: var(--accent);
-  transition: background .2s;
-}
-.opp-pip.lost { background: var(--muted); opacity: .35; }
-.opp-letters { font-size: 12px; font-weight: 800; color: var(--muted); min-width: 30px; text-align: right; }
-
-.opponent-list {
-  display: flex; flex-direction: column; gap: 6px;
-  width: 100%; max-height: 28vh; overflow-y: auto;
-  padding: 2px;
-}
-.opponent-card.won { border-color: var(--accent); }
-.opponent-card.lost { opacity: .55; }
-
-/* ============================================================
-   SOLO CARD & DIVIDER
-   ============================================================ */
-.solo-card {
-  width: 100%;
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 14px; padding: 16px 18px;
-  background: var(--accent); color: var(--on-accent);
-  border-radius: 20px;
-  box-shadow: 0 10px 24px -10px var(--accent);
-  transition: transform .12s ease, box-shadow .12s ease;
-  text-align: left;
-}
-.solo-card:active { transform: translateY(2px); box-shadow: 0 4px 12px -8px var(--accent); }
-.solo-card .solo-card-left { display: flex; align-items: center; gap: 12px; }
-.solo-card .mode-icon { background: rgba(255,255,255,.2); color: var(--on-accent); }
-.solo-card .mode-name { font-size: 15px; font-weight: 900; color: var(--on-accent); }
-.solo-card .mode-desc { font-size: 11px; font-weight: 600; color: rgba(255,255,255,.75); }
-
-.mode-divider {
-  display: flex; align-items: center; gap: 12px;
-  color: var(--muted); font-size: 12px; font-weight: 700;
-  letter-spacing: .06em;
-}
-.mode-divider::before, .mode-divider::after {
-  content: ''; flex: 1; height: 1px; background: var(--hair);
-}
-
-/* ============================================================
-   LOADING
-   ============================================================ */
-.loading-dot {
-  width: 14px; height: 14px; border-radius: 50%;
-  background: var(--accent); opacity: .5;
-  animation: dot-pulse 1s ease infinite;
-}
+/* ---------- Φύλλο αποτελέσματος ---------- */
+.kr-scores { display: flex; justify-content: center; gap: var(--space-2); }
